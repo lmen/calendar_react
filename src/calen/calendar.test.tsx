@@ -17,9 +17,23 @@ it('renders the correct text when no enthusiasm level is given', () => {
     expect(monthDays).toEqual(31);
     expect(firstWeekDate).toEqual(5);
 
+    let day = Mom('01-07-2017', 'DD-MM-YYYY');
     let a1 = new MonthDays();
-    a1.fillMonthDays(Mom('01-07-2017', 'DD-MM-YYYY'));
-    expect(a1.getMonthDays()[0][6].day).toEqual(1);
+    a1.fillMonthDays(day);
+    expect(a1.getMonthDays()[0][5].day).toEqual(1);
     expect(a1.getMonthDays()[5][0].day).toEqual(31);
 
+    a1.fillMonthDays(day.add(1, 'M'));
+    expect(a1.getMonthDays()[0][1].day).toEqual(1);
+    expect(a1.getMonthDays()[4][3].day).toEqual(31);
+
+    a1.fillMonthDays(day.add(1, 'M'));
+    a1.fillMonthDays(day.add(1, 'M'));
+    a1.fillMonthDays(day.add(1, 'M'));
+    a1.fillMonthDays(day.add(1, 'M'));
+    a1.fillMonthDays(day.add(1, 'M')); // 1.1.2018
+    expect(a1.getMonthDays()[0][0].day).toEqual(1);
+    expect(a1.getMonthDays()[4][2].day).toEqual(31);
+    expect(a1.getMonthDays()[4][3].day).toEqual(1);
+    expect(a1.getMonthDays()[4][3].currentMonth).toBeFalsy();
 });

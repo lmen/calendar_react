@@ -20,15 +20,16 @@ export class MonthDays {
     }
 
     public fillMonthDays(displayDate: Mom.Moment) {
-        let info = { year: displayDate.year(), month: displayDate.month() - 1, day: 1 }; // month is zero based
+        let info = { year: displayDate.year(), month: displayDate.month(), day: 1 }; // month is zero based
         let first = Mom(info);
         this.displayDate = first;
 
         let firstWeekDate = first.isoWeekday() - 1;
-        let last = first;
+        let last = Mom(info);
         if (firstWeekDate !== 0) {
             last = Mom(info).subtract(firstWeekDate, 'd');
         }
+
 
         for (let r = 0; r < 6; r++) {
             for (let j = 0; j < 7; j++) {

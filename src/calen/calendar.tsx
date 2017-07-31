@@ -77,12 +77,17 @@ export class CalendarDropDown extends React.Component<CDDownProps, CDDownState> 
 
         return (
             <div className="cdrop">
-                <div>
-                    <span > {this.state.displayDate.format()} </span>
-                    <span className="curMonth"> {monthDesc[this.state.displayDate.month()]} </span>
-                    <span className="curYear"> {this.state.displayDate.year()}</span>
-                    <span className="nextMonth" onClick={this.handleGoPrevMonth}> &lt; </span>
-                    <span className="prevMonth" onClick={this.handleGoNextMonth}> &gt; </span>
+                <div className="zone">
+                    <div className="one">
+                        <span className="curMonth"> {monthDesc[this.state.displayDate.month()]} </span>
+                        <span className="curYear"> {this.state.displayDate.year()}</span>
+                    </div>
+
+                    <div className="buttons">
+                        <span className="nextMonth" onClick={this.handleGoPrevMonth}> &lt; </span>
+                        <span className="prevMonth" onClick={this.handleGoNextMonth}> &gt; </span>
+                    </div>
+
                 </div>
                 <table className="daytable">
                     <thead>
