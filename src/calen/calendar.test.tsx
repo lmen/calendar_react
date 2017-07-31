@@ -1,4 +1,4 @@
-import * as enzyme from 'enzyme';
+// import * as enzyme from 'enzyme';
 // import * as React from 'react';
 import * as Mom from 'moment';
 import { MonthDays } from './data';
@@ -18,7 +18,8 @@ it('renders the correct text when no enthusiasm level is given', () => {
     expect(firstWeekDate).toEqual(5);
 
     let a1 = new MonthDays();
-    a1.fillMonthDays(2017, 2);
-    expect(a1.getMonthDays()).toEqual([26, 27, 28, 29, 30, 31]);
+    a1.fillMonthDays(Mom('01-07-2017', 'DD-MM-YYYY'));
+    expect(a1.getMonthDays()[0][6].day).toEqual(1);
+    expect(a1.getMonthDays()[5][0].day).toEqual(31);
 
 });

@@ -8,6 +8,8 @@ export interface DayInfo {
 
 export class MonthDays {
     private data: DayInfo[][] = [];
+    private displayDate: Mom.Moment;
+    private selectedDate: Mom.Moment;
 
     constructor() {
         this.init();
@@ -17,9 +19,10 @@ export class MonthDays {
         return this.data;
     }
 
-    public fillMonthDays(year: number, month: number) {
-        let info = { year: year, month: month - 1, day: 1 }; // month is zero based
+    public fillMonthDays(displayDate: Mom.Moment) {
+        let info = { year: displayDate.year(), month: displayDate.month() - 1, day: 1 }; // month is zero based
         let first = Mom(info);
+        this.displayDate = first;
 
         let firstWeekDate = first.isoWeekday() - 1;
         let last = first;
@@ -29,19 +32,25 @@ export class MonthDays {
 
         for (let r = 0; r < 6; r++) {
             for (let j = 0; j < 7; j++) {
-                this.data[r][j].day = last.date();
-                this.data[r][j].currentMonth = last.month() === first.month();
+                let d = this.data[r][j];
+                d.day = last.date();
+                d.currentMonth = last.month() === first.month();
+                d.selected = this.selectedDate
+                    && d.currentMonth && this.displayDate.day(d.day).isSame(this.selectedDate.day());
                 last.add(1, 'd');
             }
         }
     }
 
-    public daySelected(day: number) {
+    public daySelected(selectedDate: Mom.Moment) {
+        this.selectedDate = selectedDate.clone();
+        let display = Mom(this.displayDate).startOf('hour');
+
         for (let r = 0; r < 6; r++) {
             let s = this.data[r];
             for (let j = 0; j < 7; j++) {
                 let d = s[j];
-                d.selected = d.currentMonth && d.day === day;
+                d.selected = d.currentMonth && display.day(d.day).isSame(this.selectedDate.day());
             }
         }
     }

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { AppState } from './test';
+import { AppState } from './atest';
 import * as React from 'react';
 
 interface CProps {
