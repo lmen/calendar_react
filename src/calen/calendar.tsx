@@ -1,9 +1,7 @@
 import * as React from 'react';
 import './calendar.css';
-import { MonthDays, DayInfo } from './data';
+import { DayInfo, CalendarState } from './data';
 import * as Mon from 'moment';
-
-
 
 interface CDDownDayProps {
     dayinfo: DayInfo;
@@ -42,45 +40,38 @@ export class CalendarDropDownDay extends React.Component<CDDownDayProps> {
 // =============================
 
 interface CDDownProps {
-    showDate: Mon.Moment;
-    selectedDate?: Mon.Moment;
-    curDay?: number;
-    selectedDay?: (day: number) => void;
+    info: CalendarState;
+    /* handleSelectedDay?(day: number): void;
+     handleGoPrevMonth?(): void;
+     handleGoNextMonth?(): void;*/
 }
 
-interface CDDownState {
-    displayDate: Mon.Moment;
-    selectedDate?: Mon.Moment;
-    monthDays: MonthDays;
-}
+// interface CDDownState {
+/*displayDate: Mon.Moment;
+selectedDate?: Mon.Moment;
+monthDays: MonthDays;*/
+// }
 
-export class CalendarDropDown extends React.Component<CDDownProps, CDDownState> {
+export class CalendarDropDown extends React.Component<CDDownProps> {
 
     constructor(props: CDDownProps) {
         super(props);
-        this.state = {
-            displayDate: props.showDate.clone().day(1).startOf('hour'),
-            selectedDate: props.selectedDate,
-            monthDays: new MonthDays()
-        };
-        this.state.monthDays.fillMonthDays(this.state.displayDate);
+        this.props.info.monthDays.fillMonthDays(this.props.info.displayDate);
+
         this.handleSelectedDay = this.handleSelectedDay.bind(this);
         this.handleGoPrevMonth = this.handleGoPrevMonth.bind(this);
         this.handleGoNextMonth = this.handleGoNextMonth.bind(this);
     }
 
     render() {
-
-        const weakDays = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
-        const monthDesc = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto',
-            'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-
+        const displayedMonthDesc = this.props.info.monthDesc[this.props.info.displayDate.month()];
+        const displayedComp = this.props.info.displayDate.year();
         return (
             <div className="cdrop">
                 <div className="zone">
                     <div className="one">
-                        <span className="curMonth"> {monthDesc[this.state.displayDate.month()]} </span>
-                        <span className="curYear"> {this.state.displayDate.year()}</span>
+                        <span className="curMonth"> {displayedMonthDesc} </span>
+                        <span className="curYear"> {displayedComp}</span>
                     </div>
 
                     <div className="buttons">
@@ -96,7 +87,7 @@ export class CalendarDropDown extends React.Component<CDDownProps, CDDownState> 
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.monthDays.getMonthDays().map((week, index) =>
+                        {this.props.info.monthDays.getMonthDays().map((week, index) =>
                             <tr key={index}>
                                 {week.map((d, ind) =>
                                     // tslint:disable-next-line:max-line-length
@@ -114,48 +105,60 @@ export class CalendarDropDown extends React.Component<CDDownProps, CDDownState> 
     }
 
     handleSelectedDay(day: number) {
+
         this.setState((state, props) => {
-            state.selectedDate = state.displayDate.clone().day(day);
-            state.monthDays.daySelected(state.selectedDate);
+            props.info.selectedDateByUser = props.info.displayDate.clone().day(day);
+            props.info.monthDays.daySelected(props.info.selectedDateByUser);
         });
     }
 
     handleGoPrevMonth() {
-        this.setState((prevState: CDDownState) => {
-            prevState.displayDate = prevState.displayDate.clone().subtract(1, 'M');
-            prevState.monthDays.fillMonthDays(prevState.displayDate);
+        this.setState((prevState: CalendarState) => {
+            const info = this.props.info;
+            info.displayDateGoPrevMonth();
         });
+        /*this.setState((prevState: CalendarState) => {
+            prevState.displayDateGoPrevMonth();
+        });*/
     }
 
     handleGoNextMonth() {
-        this.setState((prevState: CDDownState) => {
-            prevState.displayDate = prevState.displayDate.clone().add(1, 'M');
-            prevState.monthDays.fillMonthDays(prevState.displayDate);
+        this.setState((prevState: CalendarState) => {
+            const info = this.props.info;
+            info.displayDateGoNextMonth();
         });
     }
 
 }
 
-export class Calendar extends React.Component<CProps> {
+const weakDays = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
+const monthDesc = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto',
+    'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+export class Calendar extends React.Component<CProps, CalendarState> {
 
     constructor(props: CProps) {
         super(props);
+        let displayDate = Mon({ year: 2017, month: 7 - 1, day: 20 });
+        this.state = new CalendarState(weakDays, monthDesc, displayDate);
+
         this.onReset = this.onReset.bind(this);
+
     }
 
     render() {
-        const date = Mon({ year: 2017, month: 7 - 1, day: 20 });
         return (
             <div>
                 <input value="op" onClick={this.onReset} onFocus={this.onReset} />
-                < CalendarDropDown showDate={date} />
+                < CalendarDropDown info={this.state} />
             </div>
         );
     }
 
     onReset() {
-        console.log('Focus');
+        // console.log('Focus');
     }
+
 }
 
 interface CProps {

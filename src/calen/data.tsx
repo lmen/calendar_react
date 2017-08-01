@@ -30,7 +30,6 @@ export class MonthDays {
             last = Mom(info).subtract(firstWeekDate, 'd');
         }
 
-
         for (let r = 0; r < 6; r++) {
             for (let j = 0; j < 7; j++) {
                 let d = this.data[r][j];
@@ -66,4 +65,30 @@ export class MonthDays {
         }
     }
 
+}
+
+export class CalendarState {
+
+    displayDate: Mom.Moment;
+    lastSelectedDate: Mom.Moment;
+    selectedDateByUser: Mom.Moment;
+    weakDays: string[];
+    monthDesc: string[];
+    monthDays = new MonthDays();
+
+    constructor(weakDays: string[], monthDesc: string[], displayDate: Mom.Moment) {
+        this.weakDays = weakDays;
+        this.monthDesc = monthDesc;
+        this.displayDate = displayDate;
+    }
+
+    displayDateGoPrevMonth() {
+        this.displayDate = this.displayDate.clone().subtract(1, 'M');
+        this.monthDays.fillMonthDays(this.displayDate);
+    }
+
+    displayDateGoNextMonth() {
+        this.displayDate = this.displayDate.clone().add(1, 'M');
+        this.monthDays.fillMonthDays(this.displayDate);
+    }
 }
