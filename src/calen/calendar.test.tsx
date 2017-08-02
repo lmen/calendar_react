@@ -1,7 +1,7 @@
 // import * as enzyme from 'enzyme';
 // import * as React from 'react';
 import * as Mom from 'moment';
-import { MonthDays } from './data';
+import { MonthDays, listToMatrix } from './data';
 
 it('renders the correct text when no enthusiasm level is given', () => {
     let a = { year: 2017, month: 7 - 1, day: 1 };
@@ -36,4 +36,10 @@ it('renders the correct text when no enthusiasm level is given', () => {
     expect(a1.getMonthDays()[4][2].day).toEqual(31);
     expect(a1.getMonthDays()[4][3].day).toEqual(1);
     expect(a1.getMonthDays()[4][3].currentMonth).toBeFalsy();
+
+});
+
+it('listEvents', () => {
+    expect(listToMatrix(['a', 'b', 'c', 'd'], 2)[1][1]).toEqual('d');
+
 });

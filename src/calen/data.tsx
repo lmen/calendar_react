@@ -125,3 +125,21 @@ export class CalendarDispatcher {
         this.subscriber.handleCalendarStateChange(this.state);
     }
 }
+
+export function listToMatrix(list: string[], matrixColSize: number): string[][] {
+    let rows: string[][] = [];
+    
+    let p = 0;
+    let row: string[] = [];
+    for (let index = 0; index < list.length; index++) {
+            if (index % matrixColSize === 0) {
+                p = 0;
+                row = [];
+                rows.push(row);
+            }
+            let element = list[index];
+            row.push(element);
+        }
+
+    return rows;
+}
