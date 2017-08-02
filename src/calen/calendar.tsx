@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './calendar.css';
-import { DayInfo, CalendarState } from './data';
+import { DayInfo, CalendarState, CalendarStateSubscriber, CalendarDispatcher } from './data';
 import * as Mon from 'moment';
 
 interface CDDownDayProps {
@@ -41,22 +41,16 @@ export class CalendarDropDownDay extends React.Component<CDDownDayProps> {
 
 interface CDDownProps {
     info: CalendarState;
-    /* handleSelectedDay?(day: number): void;
-     handleGoPrevMonth?(): void;
-     handleGoNextMonth?(): void;*/
+    dispatcher: CalendarDispatcher;
 }
-
-// interface CDDownState {
-/*displayDate: Mon.Moment;
-selectedDate?: Mon.Moment;
-monthDays: MonthDays;*/
-// }
 
 export class CalendarDropDown extends React.Component<CDDownProps> {
 
+    private dispatcher: CalendarDispatcher;
+
     constructor(props: CDDownProps) {
         super(props);
-        this.props.info.monthDays.fillMonthDays(this.props.info.displayDate);
+        this.dispatcher = this.props.dispatcher;
 
         this.handleSelectedDay = this.handleSelectedDay.bind(this);
         this.handleGoPrevMonth = this.handleGoPrevMonth.bind(this);
@@ -113,20 +107,13 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
     }
 
     handleGoPrevMonth() {
-        this.setState((prevState: CalendarState) => {
-            const info = this.props.info;
-            info.displayDateGoPrevMonth();
-        });
-        /*this.setState((prevState: CalendarState) => {
-            prevState.displayDateGoPrevMonth();
-        });*/
+        // tslint:disable-next-line:no-console
+        // console.log('handleGoPrevMonth: %s', this.props.info.displayDateGoPrevMonthAction);
+        this.dispatcher.displayDateGoPrevMonthAction();
     }
 
     handleGoNextMonth() {
-        this.setState((prevState: CalendarState) => {
-            const info = this.props.info;
-            info.displayDateGoNextMonth();
-        });
+        this.dispatcher.displayDateGoNextMonthAction();
     }
 
 }
@@ -135,28 +122,38 @@ const weakDays = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
 const monthDesc = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto',
     'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-export class Calendar extends React.Component<CProps, CalendarState> {
+export class Calendar extends React.Component<CProps, CalendarState> implements CalendarStateSubscriber {
+
+    private dispatcher: CalendarDispatcher;
 
     constructor(props: CProps) {
         super(props);
         let displayDate = Mon({ year: 2017, month: 7 - 1, day: 20 });
+
         this.state = new CalendarState(weakDays, monthDesc, displayDate);
+        this.dispatcher = new CalendarDispatcher(this, this.state);
+        this.handleReset = this.handleReset.bind(this);
 
-        this.onReset = this.onReset.bind(this);
-
+        this.dispatcher.displayDateChangeToNew(displayDate);
     }
 
     render() {
         return (
             <div>
-                <input value="op" onClick={this.onReset} onFocus={this.onReset} />
-                < CalendarDropDown info={this.state} />
+                <input value="op" onClick={this.handleReset} onFocus={this.handleReset} />
+                < CalendarDropDown info={this.state} dispatcher={this.dispatcher} />
             </div>
         );
     }
 
-    onReset() {
+    handleReset() {
         // console.log('Focus');
+    }
+
+    handleCalendarStateChange(newState: CalendarState): void {
+        this.setState((prevState) => {
+            return newState;
+        });
     }
 
 }

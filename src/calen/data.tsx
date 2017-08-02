@@ -76,19 +76,52 @@ export class CalendarState {
     monthDesc: string[];
     monthDays = new MonthDays();
 
-    constructor(weakDays: string[], monthDesc: string[], displayDate: Mom.Moment) {
+    constructor(
+        weakDays: string[], monthDesc: string[], displayDate: Mom.Moment) {
         this.weakDays = weakDays;
         this.monthDesc = monthDesc;
         this.displayDate = displayDate;
     }
 
-    displayDateGoPrevMonth() {
-        this.displayDate = this.displayDate.clone().subtract(1, 'M');
-        this.monthDays.fillMonthDays(this.displayDate);
+}
+
+export interface CalendarStateSubscriber {
+    handleCalendarStateChange(newState: CalendarState): void;
+}
+
+export class CalendarDispatcher {
+    constructor(
+        public subscriber: CalendarStateSubscriber,
+        public state: CalendarState) {
     }
 
-    displayDateGoNextMonth() {
-        this.displayDate = this.displayDate.clone().add(1, 'M');
-        this.monthDays.fillMonthDays(this.displayDate);
+    displayDateChangeToNew(newDisplayDate: Mom.Moment) {
+        this.state.displayDate = newDisplayDate;
+        this.state.monthDays.fillMonthDays(newDisplayDate);
+    }
+
+    displayDateGoPrevMonthAction() {
+        this.state.displayDate = this.state.displayDate.clone().subtract(1, 'M');
+        this.state.monthDays.fillMonthDays(this.state.displayDate);
+
+        this.sendToSubscribers();
+    }
+
+    displayDateGoNextMonthAction() {
+        this.state.displayDate = this.state.displayDate.clone().add(1, 'M');
+        this.state.monthDays.fillMonthDays(this.state.displayDate);
+
+        this.sendToSubscribers();
+    }
+
+    handleSelectedDay(day: number) {
+        this.state.selectedDateByUser = this.state.displayDate.clone().day(day);
+        this.state.monthDays.daySelected(this.state.selectedDateByUser);
+
+        this.sendToSubscribers();
+    }
+
+    public sendToSubscribers() {
+        this.subscriber.handleCalendarStateChange(this.state);
     }
 }
