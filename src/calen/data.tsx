@@ -128,18 +128,63 @@ export class CalendarDispatcher {
 
 export function listToMatrix(list: string[], matrixColSize: number): string[][] {
     let rows: string[][] = [];
-    
-    let p = 0;
+
     let row: string[] = [];
     for (let index = 0; index < list.length; index++) {
-            if (index % matrixColSize === 0) {
-                p = 0;
-                row = [];
-                rows.push(row);
-            }
-            let element = list[index];
-            row.push(element);
+        if (index % matrixColSize === 0) {
+            row = [];
+            rows.push(row);
         }
+        let element = list[index];
+        row.push(element);
+    }
 
     return rows;
+}
+
+export function findRowOfyear(years: number[][], year: number): number {
+    for (let i = 0; i < years.length; i++) {
+        for (let j = 0; j < years[i].length; j++) {
+            if (years[i][j] === year) {
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
+export function yearsMatrix(matrixColSize: number): number[][] {
+    let rows: number[][] = [];
+
+    let row: number[] = [];
+    for (let year = 1920, i = 0; year < 2100; year++ , i++) {
+        if (i % matrixColSize === 0) {
+            row = [];
+            rows.push(row);
+        }
+        row.push(year);
+    }
+
+    return rows;
+}
+
+export function showYearInViewPort(years: number[][], viewPortLines: number, yearToShow: number): number {
+    let numRow = findRowOfyear(years, yearToShow);
+    if (numRow < 0) {
+        return numRow;
+    }
+
+    return Math.max(0, numRow - Math.floor(((viewPortLines - 1) / 2)));
+}
+
+export function vpMoveup(years: number[][], startLine: number): number {
+    return Math.max(0, startLine - 1);
+}
+
+export function vpMoveDown(years: number[][], startLine: number): number {
+    return Math.min(years.length - 1, startLine + 1);
+}
+
+export function vpEndLine(years: number[][], startLine: number, vpMaxLines: number): number {
+    return Math.min(years.length - 1, startLine + vpMaxLines - 1);
 }
