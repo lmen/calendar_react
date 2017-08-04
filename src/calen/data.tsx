@@ -116,10 +116,29 @@ export class CalendarDispatcher {
         this.sendToSubscribers();
     }
 
+    yearSelected(newYear: number) {
+        const newDisplayDate = this.state.displayDate.clone().year(newYear);
+        if (!newDisplayDate.isValid()) {
+            return;
+        }
+
+        this.displayDateChangeToNew(newDisplayDate);
+    }
+
+    monthSelected(newMonth: number) {
+        console.log(">> %s", newMonth);
+
+        const newDisplayDate = this.state.displayDate.clone().month(newMonth);
+        if (!newDisplayDate.isValid()) {
+            return;
+        }
+
+        this.displayDateChangeToNew(newDisplayDate);
+    }
+
     displayDateChangeToNew(newDisplayDate: Mom.Moment) {
         this.state.displayDate = newDisplayDate;
         this.state.monthDays.fillMonthDays(newDisplayDate);
-        this.openYearSelection();
 
         this.sendToSubscribers();
     }

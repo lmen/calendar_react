@@ -60,12 +60,14 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
     render() {
         const displayedMonthDesc = this.props.info.monthDesc[this.props.info.displayDate.month()];
         const displayedComp = this.props.info.displayDate.year();
+        const displayedDay = this.props.info.displayDate.date();
         return (
             <div className="cdrop">
                 <div className="zone">
                     <div className="one">
                         <span className="curMonth"> {displayedMonthDesc} </span>
                         <span className="curYear"> {displayedComp}</span>
+                        <span className="curYear"> {displayedDay}</span>
                     </div>
 
                     <div className="buttons">
@@ -131,9 +133,17 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
         super(props);
         this.dispatcher = this.props.dispatcher;
 
-        this.handleSelectedDay = this.handleSelectedDay.bind(this);
+        this.handleSelectedMonth = this.handleSelectedMonth.bind(this);
         this.handleGoPrevMonth = this.handleGoPrevMonth.bind(this);
         this.handleGoNextMonth = this.handleGoNextMonth.bind(this);
+    }
+
+    renderMonth(month: string, num: number, isSelected: boolean, onYearSelected: (month: number) => void) {
+        function intonYearSelected() {
+            onYearSelected(num);
+        }
+        const css = isSelected ? 'monthSelected' : '';
+        return (<td key={month} onClick={intonYearSelected} className={css}>{month}</td>);
     }
 
     render() {
@@ -156,17 +166,16 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
                 </div>
 
                 <table className="monthtable">
-
                     <tbody>
                         {monthMatrix.map((row, index) =>
                             <tr key={index}>
-                                {row.map((d, ind) =>
-                                    <td key={ind}>{d}</td>
-                                )}
+                                {row.map((desc, ind) => {
+                                    let monthNum = (index * 4) + ind;
+                                    let selected = desc === displayedMonthDesc;
+                                    return this.renderMonth(desc, monthNum, selected, this.handleSelectedMonth);
+                                })}
                             </tr>
-                        )
-                        }
-
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -174,12 +183,9 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
 
     }
 
-    handleSelectedDay(day: number) {
+    handleSelectedMonth(month: number) {
 
-        this.setState((state, props) => {
-            props.info.selectedDateByUser = props.info.displayDate.clone().day(day);
-            props.info.monthDays.daySelected(props.info.selectedDateByUser);
-        });
+        this.dispatcher.monthSelected(month);
     }
 
     handleGoPrevMonth() {
@@ -207,13 +213,17 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
         super(props);
         this.dispatcher = this.props.dispatcher;
 
-        this.handleSelectedDay = this.handleSelectedDay.bind(this);
+        this.handleSelectedYear = this.handleSelectedYear.bind(this);
         this.handleGoPrevMonth = this.handleGoPrevMonth.bind(this);
         this.handleGoNextMonth = this.handleGoNextMonth.bind(this);
     }
 
-    renderYear(year: number) {
-        return (<td key={year}>{year}</td>);
+    renderYear(year: number, isSelected: boolean, onYearSelected: (year: number) => void) {
+        function intonYearSelected() {
+            onYearSelected(year);
+        }
+        const css = isSelected ? 'yearSelected' : '';
+        return (<td key={year} onClick={intonYearSelected} className={css}>{year}</td>);
     }
 
     render() {
@@ -241,7 +251,7 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
                         {yearsMat.map((row, index) =>
                             <tr key={index}>
                                 {row.map((d, ind) =>
-                                    this.renderYear(d)
+                                    this.renderYear(d, d === displayedComp, this.handleSelectedYear)
                                 )}
                             </tr>
                         )
@@ -254,12 +264,9 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
 
     }
 
-    handleSelectedDay(day: number) {
+    handleSelectedYear(year: number) {
 
-        this.setState((state, props) => {
-            props.info.selectedDateByUser = props.info.displayDate.clone().day(day);
-            props.info.monthDays.daySelected(props.info.selectedDateByUser);
-        });
+        this.dispatcher.yearSelected(year);
     }
 
     handleGoPrevMonth() {
@@ -269,6 +276,11 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
     handleGoNextMonth() {
         this.dispatcher.yearViewPortMoveDown();
     }
+
+}
+
+// ==============
+interface CProps {
 
 }
 
@@ -314,6 +326,4 @@ export class Calendar extends React.Component<CProps, CalendarState> implements 
 
 }
 
-interface CProps {
 
-}

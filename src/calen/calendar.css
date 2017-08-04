@@ -9,12 +9,13 @@
     text-align: center;
     /* border: 1px solid black; */
 }
+
 .cdrop td.day {
-    color:red;
+    color: red;
 }
 
 .cdrop td.day-inactive {
-    color:blueviolet;
+    color: blueviolet;
 }
 
 .cdrop td.header {
@@ -26,7 +27,7 @@
     color: azure;
 }
 
-.cdrop .zone  {
+.cdrop .zone {
     width: 300px;
 }
 
@@ -34,7 +35,12 @@
     float: left;
 }
 
-.cdrop .zone .buttons {    
+.cdrop .zone .buttons {
     float: right;
     cursor: pointer;
+}
+
+.yearSelected,
+.monthSelected {
+    color: red;
 }
