@@ -5,7 +5,8 @@ import * as Mon from 'moment';
 
 interface CDDownDayProps {
     dayinfo: DayInfo;
-    selectedDay?: (day: number) => void;
+    selectedDay?: (day: number) => void | undefined;
+    sel: boolean;
 }
 
 export class CalendarDropDownDay extends React.Component<CDDownDayProps> {
@@ -23,7 +24,7 @@ export class CalendarDropDownDay extends React.Component<CDDownDayProps> {
     }
 
     cssClass() {
-        if (this.props.dayinfo.selected) {
+        if (this.props.sel) {
             return 'day-selected';
         }
         return this.props.dayinfo.currentMonth ? 'day' : 'day-inactive';
@@ -59,8 +60,9 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
 
     render() {
         const displayedMonthDesc = this.props.info.monthDesc[this.props.info.displayDate.month()];
-        const displayedComp = this.props.info.displayDate.year();
-        const displayedDay = this.props.info.displayDate.date();
+        const displayDate = this.props.info.displayDate;
+        const displayedComp = displayDate.year();
+        const displayedDay = displayDate.date();
         return (
             <div className="cdrop">
                 <div className="zone">
@@ -87,7 +89,7 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
                             <tr key={index}>
                                 {week.map((d, ind) =>
                                     // tslint:disable-next-line:max-line-length
-                                    <CalendarDropDownDay key={ind} dayinfo={d} selectedDay={this.handleSelectedDay} />
+                                    <CalendarDropDownDay key={ind} dayinfo={d} sel={this.isSelectedDay(displayDate, d)} selectedDay={d.currentMonth ? this.handleSelectedDay : undefined} />
                                 )}
                             </tr>)
                         }
@@ -113,10 +115,18 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
         this.dispatcher.displayDateGoNextMonthAction();
     }
 
-    /*private isSelectedDay(displayDate: Mon.Moment, dayInfo: DayInfo) {
-        let yearSel = this.props.info.selectedDateByUser ? this.props.info.selectedDateByUser.year() : -1;
-        return year === yearSel;
-    } */
+    private isSelectedDay(displayDate: Mon.Moment, dayInfo: DayInfo) {
+        if (!dayInfo.currentMonth || !this.props.info.selectedDateByUser) {
+            return false;
+        }
+
+        let selDay = -1, selyear = -1, selmonth = -1;
+        selDay = this.props.info.selectedDateByUser.date();
+        selyear = this.props.info.selectedDateByUser.year();
+        selmonth = this.props.info.selectedDateByUser.month();
+
+        return selDay === dayInfo.day && selmonth === displayDate.month() && selyear === displayDate.year();
+    }
 
 }
 
