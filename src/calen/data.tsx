@@ -98,6 +98,19 @@ export class CalendarDispatcher {
         public state: CalendarState) {
     }
 
+    init(selectedDate: Mom.Moment) {
+        const displayDate = selectedDate || Mom.now();
+        this.state.displayDate = displayDate;
+
+        this.state.lastSelectedDate = selectedDate;
+        this.state.selectedDateByUser = selectedDate;
+
+        this.state.monthDays.fillMonthDays(displayDate);
+        this.state.yearsViewPort.showYear(displayDate.year());
+
+        // Is to be called on a component constructor, don't inform the subscriber
+    }
+
     openYearSelection() {
         this.state.yearsViewPort.showYear(this.state.displayDate.year());
 
@@ -119,14 +132,21 @@ export class CalendarDispatcher {
     yearSelected(newYear: number) {
         const newDisplayDate = this.state.displayDate.clone().year(newYear);
         if (!newDisplayDate.isValid()) {
+            // tslint:disable-next-line:no-console
+            console.log('invalid date: %s', newYear);
             return;
         }
 
-        this.displayDateChangeToNew(newDisplayDate);
+        this.state.selectedDateByUser = newDisplayDate;
+        this.state.displayDate = newDisplayDate;
+        this.state.monthDays.fillMonthDays(newDisplayDate);
+
+        this.sendToSubscribers();
     }
 
     monthSelected(newMonth: number) {
-        console.log(">> %s", newMonth);
+        // tslint:disable-next-line:no-console
+        console.log('>> %s', newMonth);
 
         const newDisplayDate = this.state.displayDate.clone().month(newMonth);
         if (!newDisplayDate.isValid()) {
@@ -135,6 +155,18 @@ export class CalendarDispatcher {
 
         this.displayDateChangeToNew(newDisplayDate);
     }
+
+    daySelected(day: number) {
+
+        // tslint:disable-next-line:no-console
+        console.log('>> %s', day);
+
+        this.state.selectedDateByUser = this.state.displayDate.clone().day(day);
+        this.state.monthDays.daySelected(this.state.selectedDateByUser);
+
+        this.sendToSubscribers();
+    }
+
 
     displayDateChangeToNew(newDisplayDate: Mom.Moment) {
         this.state.displayDate = newDisplayDate;
@@ -157,12 +189,6 @@ export class CalendarDispatcher {
         this.sendToSubscribers();
     }
 
-    handleSelectedDay(day: number) {
-        this.state.selectedDateByUser = this.state.displayDate.clone().day(day);
-        this.state.monthDays.daySelected(this.state.selectedDateByUser);
-
-        this.sendToSubscribers();
-    }
 
     public sendToSubscribers() {
         this.subscriber.handleCalendarStateChange(this.state);

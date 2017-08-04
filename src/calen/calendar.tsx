@@ -102,10 +102,7 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
 
     handleSelectedDay(day: number) {
 
-        this.setState((state, props) => {
-            props.info.selectedDateByUser = props.info.displayDate.clone().day(day);
-            props.info.monthDays.daySelected(props.info.selectedDateByUser);
-        });
+        this.props.dispatcher.daySelected(day);
     }
 
     handleGoPrevMonth() {
@@ -115,6 +112,11 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
     handleGoNextMonth() {
         this.dispatcher.displayDateGoNextMonthAction();
     }
+
+    /*private isSelectedDay(displayDate: Mon.Moment, dayInfo: DayInfo) {
+        let yearSel = this.props.info.selectedDateByUser ? this.props.info.selectedDateByUser.year() : -1;
+        return year === yearSel;
+    } */
 
 }
 
@@ -150,6 +152,7 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
         const displayedMonthDesc = this.props.info.monthDesc[this.props.info.displayDate.month()];
         const displayedComp = this.props.info.displayDate.year();
         const monthMatrix = listToMatrix(this.props.info.monthDesc, 4);
+
         return (
             <div className="cdrop">
                 <div className="zone">
@@ -171,7 +174,7 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
                             <tr key={index}>
                                 {row.map((desc, ind) => {
                                     let monthNum = (index * 4) + ind;
-                                    let selected = desc === displayedMonthDesc;
+                                    let selected = this.isToSelectedYear(monthNum);
                                     return this.renderMonth(desc, monthNum, selected, this.handleSelectedMonth);
                                 })}
                             </tr>
@@ -196,6 +199,10 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
         this.dispatcher.displayDateGoNextMonthAction();
     }
 
+    private isToSelectedYear(month: number): boolean {
+        let monthSel = this.props.info.selectedDateByUser ? this.props.info.selectedDateByUser.month() : -1;
+        return monthSel === month;
+    }
 }
 
 // =============================
@@ -229,6 +236,7 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
     render() {
         const displayedMonthDesc = this.props.info.monthDesc[this.props.info.displayDate.month()];
         const displayedComp = this.props.info.displayDate.year();
+
         const yearsMat = this.props.info.yearsViewPort.content();
         return (
             <div className="cdrop">
@@ -251,7 +259,7 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
                         {yearsMat.map((row, index) =>
                             <tr key={index}>
                                 {row.map((d, ind) =>
-                                    this.renderYear(d, d === displayedComp, this.handleSelectedYear)
+                                    this.renderYear(d, this.isSelectedYear(d), this.handleSelectedYear)
                                 )}
                             </tr>
                         )
@@ -277,6 +285,11 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
         this.dispatcher.yearViewPortMoveDown();
     }
 
+    private isSelectedYear(year: number) {
+        let yearSel = this.props.info.selectedDateByUser ? this.props.info.selectedDateByUser.year() : -1;
+        return year === yearSel;
+    }
+
 }
 
 // ==============
@@ -294,13 +307,13 @@ export class Calendar extends React.Component<CProps, CalendarState> implements 
 
     constructor(props: CProps) {
         super(props);
-        let displayDate = Mon({ year: 2017, month: 7 - 1, day: 20 });
+        let currDate = Mon({ year: 2017, month: 7 - 1, day: 20 });
 
-        this.state = new CalendarState(weakDays, monthDesc, displayDate);
+        this.state = new CalendarState(weakDays, monthDesc, currDate);
         this.dispatcher = new CalendarDispatcher(this, this.state);
         this.handleReset = this.handleReset.bind(this);
 
-        this.dispatcher.displayDateChangeToNew(displayDate);
+        this.dispatcher.init(currDate);
     }
 
     render() {
@@ -325,5 +338,3 @@ export class Calendar extends React.Component<CProps, CalendarState> implements 
     }
 
 }
-
-
