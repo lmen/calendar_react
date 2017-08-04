@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './calendar.css';
-import { DayInfo, CalendarState, CalendarStateSubscriber, CalendarDispatcher, listToMatrix, yearsMatrix } from './data';
+import { DayInfo, CalendarState, CalendarStateSubscriber, CalendarDispatcher, listToMatrix } from './data';
 import * as Mon from 'moment';
 
 interface CDDownDayProps {
@@ -212,10 +212,14 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
         this.handleGoNextMonth = this.handleGoNextMonth.bind(this);
     }
 
+    renderYear(year: number) {
+        return (<td key={year}>{year}</td>);
+    }
+
     render() {
         const displayedMonthDesc = this.props.info.monthDesc[this.props.info.displayDate.month()];
         const displayedComp = this.props.info.displayDate.year();
-        const yearsMat = yearsMatrix(6);
+        const yearsMat = this.props.info.yearsViewPort.content();
         return (
             <div className="cdrop">
                 <div className="zone">
@@ -237,7 +241,7 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
                         {yearsMat.map((row, index) =>
                             <tr key={index}>
                                 {row.map((d, ind) =>
-                                    <td key={ind}>{d}</td>
+                                    this.renderYear(d)
                                 )}
                             </tr>
                         )
@@ -259,11 +263,11 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
     }
 
     handleGoPrevMonth() {
-        this.dispatcher.displayDateGoPrevMonthAction();
+        this.dispatcher.yearViewPortMoveUp();
     }
 
     handleGoNextMonth() {
-        this.dispatcher.displayDateGoNextMonthAction();
+        this.dispatcher.yearViewPortMoveDown();
     }
 
 }

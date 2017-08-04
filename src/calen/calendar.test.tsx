@@ -1,7 +1,10 @@
 // import * as enzyme from 'enzyme';
 // import * as React from 'react';
 import * as Mom from 'moment';
-import { MonthDays, listToMatrix, yearsMatrix, findRowOfyear, showYearInViewPort, vpMoveup, vpMoveDown, vpEndLine } from './data';
+import {
+    MonthDays, listToMatrix, yearsMatrix, findRowOfyear,
+    showYearInViewPort, vpMoveup, vpMoveDown, vpEndLine
+} from './data';
 
 it('renders the correct text when no enthusiasm level is given', () => {
     let a = { year: 2017, month: 7 - 1, day: 1 };
@@ -66,4 +69,3 @@ it('years', () => {
     expect(vpEndLine(yearsMat, 0, 6)).toBe(5);
 
 });
-

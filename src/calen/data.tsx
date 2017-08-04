@@ -67,6 +67,8 @@ export class MonthDays {
 
 }
 
+const YEAR_VIRE_PORT_LINE = 6;
+
 export class CalendarState {
 
     displayDate: Mom.Moment;
@@ -75,6 +77,7 @@ export class CalendarState {
     weakDays: string[];
     monthDesc: string[];
     monthDays = new MonthDays();
+    yearsViewPort = new ViewPort(YEARS_MATRIX, YEAR_VIRE_PORT_LINE);
 
     constructor(
         weakDays: string[], monthDesc: string[], displayDate: Mom.Moment) {
@@ -95,9 +98,30 @@ export class CalendarDispatcher {
         public state: CalendarState) {
     }
 
+    openYearSelection() {
+        this.state.yearsViewPort.showYear(this.state.displayDate.year());
+
+        this.sendToSubscribers();
+    }
+
+    yearViewPortMoveUp() {
+        this.state.yearsViewPort.moveup();
+
+        this.sendToSubscribers();
+    }
+
+    yearViewPortMoveDown() {
+        this.state.yearsViewPort.moveDown();
+
+        this.sendToSubscribers();
+    }
+
     displayDateChangeToNew(newDisplayDate: Mom.Moment) {
         this.state.displayDate = newDisplayDate;
         this.state.monthDays.fillMonthDays(newDisplayDate);
+        this.openYearSelection();
+
+        this.sendToSubscribers();
     }
 
     displayDateGoPrevMonthAction() {
@@ -153,6 +177,9 @@ export function findRowOfyear(years: number[][], year: number): number {
     return -1;
 }
 
+const YEAR_COL_SIZE = 6;
+const YEARS_MATRIX = yearsMatrix(YEAR_COL_SIZE);
+
 export function yearsMatrix(matrixColSize: number): number[][] {
     let rows: number[][] = [];
 
@@ -187,4 +214,33 @@ export function vpMoveDown(years: number[][], startLine: number): number {
 
 export function vpEndLine(years: number[][], startLine: number, vpMaxLines: number): number {
     return Math.min(years.length - 1, startLine + vpMaxLines - 1);
+}
+
+export class ViewPort {
+
+    constructor(private years: number[][], private maxLines: number, private startLine: number = 0) {
+    }
+
+    showYear(yearToShow: number): void {
+        let numRow = findRowOfyear(this.years, yearToShow);
+        if (numRow < 0) {
+            return;
+        }
+
+        this.startLine = Math.max(0, numRow - Math.floor(((this.maxLines - 1) / 2)));
+    }
+
+    moveup(): void {
+        this.startLine = Math.max(0, this.startLine - 1);
+    }
+
+    moveDown(): void {
+        this.startLine = Math.min(this.years.length - 1, this.startLine + 1);
+    }
+
+    public content(): number[][] {
+        const endLine = Math.min(this.years.length - 1, this.startLine + this.maxLines - 1);
+        return this.years.slice(this.startLine, endLine + 1);
+    }
+
 }
