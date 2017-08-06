@@ -68,9 +68,11 @@ export class MonthDays {
 }
 
 const YEAR_VIRE_PORT_LINE = 6;
+export enum VIEW { DAY, MONTH_LIST, YEAR_LIST }
 
 export class CalendarState {
 
+    currentView: VIEW;
     displayDate: Mom.Moment;
     lastSelectedDate: Mom.Moment;
     selectedDateByUser: Mom.Moment;
@@ -99,8 +101,10 @@ export class CalendarDispatcher {
     }
 
     init(selectedDate: Mom.Moment) {
+
         selectedDate = selectedDate || Mom.now();
 
+        this.state.currentView = VIEW.DAY;
         this.state.displayDate = selectedDate.clone().date(1);
 
         this.state.lastSelectedDate = selectedDate;
@@ -110,12 +114,6 @@ export class CalendarDispatcher {
         this.state.yearsViewPort.showYear(selectedDate.year());
 
         // Is to be called on a component constructor, don't inform the subscriber
-    }
-
-    openYearSelection() {
-        this.state.yearsViewPort.showYear(this.state.displayDate.year());
-
-        this.sendToSubscribers();
     }
 
     yearViewPortMoveUp() {
@@ -139,6 +137,7 @@ export class CalendarDispatcher {
         }
 
         // this.state.selectedDateByUser = newDisplayDate;
+        this.state.currentView = VIEW.DAY;
         this.state.displayDate = newDisplayDate;
         this.state.monthDays.fillMonthDays(newDisplayDate);
 
@@ -154,7 +153,7 @@ export class CalendarDispatcher {
             return;
         }
 
-        // this.state.selectedDateByUser = newDisplayDate;
+        this.state.currentView = VIEW.DAY;
         this.state.displayDate = newDisplayDate;
         this.state.monthDays.fillMonthDays(newDisplayDate);
 
@@ -195,6 +194,27 @@ export class CalendarDispatcher {
     displayDateGoNextMonthAction() {
         this.state.displayDate = this.state.displayDate.clone().add(1, 'M');
         this.state.monthDays.fillMonthDays(this.state.displayDate);
+
+        this.sendToSubscribers();
+    }
+
+    showDays() {
+
+        this.state.currentView = VIEW.DAY;
+
+        this.sendToSubscribers();
+    }
+
+    showMonthsList() {
+
+        this.state.currentView = VIEW.MONTH_LIST;
+
+        this.sendToSubscribers();
+    }
+
+    showYearsList() {
+        this.state.currentView = VIEW.YEAR_LIST;
+        this.state.yearsViewPort.showYear(this.state.displayDate.year());
 
         this.sendToSubscribers();
     }

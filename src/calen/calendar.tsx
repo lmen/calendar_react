@@ -1,14 +1,16 @@
 import * as React from 'react';
 import './calendar.css';
-import { DayInfo, CalendarState, CalendarStateSubscriber, CalendarDispatcher, listToMatrix } from './data';
+import { DayInfo, CalendarState, CalendarStateSubscriber, CalendarDispatcher, listToMatrix, VIEW } from './data';
 import * as Mon from 'moment';
 
-export class CalendarDDSapo extends React.Component<{
+export class CalendarDDToolbar extends React.Component<{
     showBtns: boolean;
     monthDesc: string[];
     displayDate: Mon.Moment;
     onPrev?: () => void;
     onNext?: () => void;
+    onMonth?: () => void;
+    onYear?: () => void;
 }> {
 
     renderBtns() {
@@ -26,8 +28,8 @@ export class CalendarDDSapo extends React.Component<{
         return (
             <div className="zone">
                 <div className="one">
-                    <span className="curMonth"> {displayedMonthDesc} </span>
-                    <span className="curYear"> {displayedComp}</span>
+                    <span className="curMonth" onClick={this.props.onMonth} > {displayedMonthDesc} </span>
+                    <span className="curYear" onClick={this.props.onYear}> {displayedComp}</span>
                 </div>
 
                 {this.props.showBtns ? this.renderBtns() : false}
@@ -76,7 +78,7 @@ interface CDDownProps {
     dispatcher: CalendarDispatcher;
 }
 
-export class CalendarDropDown extends React.Component<CDDownProps> {
+export class CalendarDays extends React.Component<CDDownProps> {
 
     private dispatcher: CalendarDispatcher;
 
@@ -87,18 +89,22 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
         this.handleSelectedDay = this.handleSelectedDay.bind(this);
         this.handleGoPrevMonth = this.handleGoPrevMonth.bind(this);
         this.handleGoNextMonth = this.handleGoNextMonth.bind(this);
+        this.handleGoMonthsList = this.handleGoMonthsList.bind(this);
+        this.handleGoYearsList = this.handleGoYearsList.bind(this);
     }
 
     render() {
         const displayDate = this.props.info.displayDate;
         return (
             <div className="cdrop">
-                <CalendarDDSapo
+                <CalendarDDToolbar
                     monthDesc={this.props.info.monthDesc}
                     showBtns={true}
                     displayDate={displayDate}
                     onNext={this.handleGoNextMonth}
                     onPrev={this.handleGoPrevMonth}
+                    onMonth={this.handleGoMonthsList}
+                    onYear={this.handleGoYearsList}
                 />
                 <table className="daytable">
                     <thead>
@@ -138,6 +144,14 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
 
     handleGoNextMonth() {
         this.dispatcher.displayDateGoNextMonthAction();
+    }
+
+    handleGoMonthsList() {
+        this.dispatcher.showMonthsList();
+    }
+
+    handleGoYearsList() {
+        this.dispatcher.showYearsList();
     }
 
     private isSelectedDay(displayDate: Mon.Moment, dayInfo: DayInfo) {
@@ -188,7 +202,7 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
         return (
             <div className="cdrop">
 
-                <CalendarDDSapo
+                <CalendarDDToolbar
                     monthDesc={this.props.info.monthDesc}
                     showBtns={false}
                     displayDate={this.props.info.displayDate}
@@ -263,7 +277,7 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
         const yearsMat = this.props.info.yearsViewPort.content();
         return (
             <div className="cdrop">
-                <CalendarDDSapo
+                <CalendarDDToolbar
                     monthDesc={this.props.info.monthDesc}
                     showBtns={true}
                     displayDate={this.props.info.displayDate}
@@ -308,6 +322,41 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
 
 }
 
+// ==================
+interface CDDownProps {
+    info: CalendarState;
+    dispatcher: CalendarDispatcher;
+}
+
+export class CalendarDropDown extends React.Component<CDDownProps> {
+
+    renderDays() {
+        return (
+            < CalendarDays info={this.props.info} dispatcher={this.props.dispatcher} />
+        );
+    }
+
+    renderMonthsList() {
+        return (
+            < CalendarMonthSelect info={this.props.info} dispatcher={this.props.dispatcher} />
+        );
+    }
+
+    rendersYearsList() {
+        return (
+            < CalendarYearSelect info={this.props.info} dispatcher={this.props.dispatcher} />
+        );
+    }
+
+    render() {
+        const view = this.props.info.currentView;
+        return ((view === VIEW.DAY ? this.renderDays() :
+            (view === VIEW.MONTH_LIST ? this.renderMonthsList() : this.rendersYearsList()))
+        );
+    }
+
+}
+
 // ==============
 interface CProps {
 
@@ -336,9 +385,12 @@ export class Calendar extends React.Component<CProps, CalendarState> implements 
         return (
             <div>
                 <input value="op" onClick={this.handleReset} onFocus={this.handleReset} />
-                < CalendarDropDown info={this.state} dispatcher={this.dispatcher} />
+                <CalendarDropDown info={this.state} dispatcher={this.dispatcher} />
+                {/*
+                < CalendarDays info={this.state} dispatcher={this.dispatcher} />
                 < CalendarMonthSelect info={this.state} dispatcher={this.dispatcher} />
                 < CalendarYearSelect info={this.state} dispatcher={this.dispatcher} />
+                */}
             </div>
         );
     }
