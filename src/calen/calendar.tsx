@@ -3,6 +3,43 @@ import './calendar.css';
 import { DayInfo, CalendarState, CalendarStateSubscriber, CalendarDispatcher, listToMatrix } from './data';
 import * as Mon from 'moment';
 
+export interface CalendarDDSapoProps {
+    showBtns: boolean;
+    monthDesc: string[];
+    displayDate: Mon.Moment;
+    onPrev?: () => void;
+    onNext?: () => void;
+}
+
+export class CalendarDDSapo extends React.Component<CalendarDDSapoProps> {
+
+    renderBtns() {
+        return (
+            <div className="buttons">
+                <span className="nextMonth" onClick={this.props.onPrev}> &lt; </span>
+                <span className="prevMonth" onClick={this.props.onNext}> &gt; </span>
+            </div>
+        );
+    }
+
+    render() {
+        const displayedMonthDesc = this.props.monthDesc[this.props.displayDate.month()];
+        const displayedComp = this.props.displayDate.year();
+        return (
+            <div className="zone">
+                <div className="one">
+                    <span className="curMonth"> {displayedMonthDesc} </span>
+                    <span className="curYear"> {displayedComp}</span>
+                </div>
+
+                {this.props.showBtns ? this.renderBtns() : false}
+
+            </div>);
+    }
+}
+
+// ================================
+
 interface CDDownDayProps {
     dayinfo: DayInfo;
     selectedDay?: (day: number) => void | undefined;
@@ -59,25 +96,16 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
     }
 
     render() {
-        const displayedMonthDesc = this.props.info.monthDesc[this.props.info.displayDate.month()];
         const displayDate = this.props.info.displayDate;
-        const displayedComp = displayDate.year();
-        const displayedDay = displayDate.date();
         return (
             <div className="cdrop">
-                <div className="zone">
-                    <div className="one">
-                        <span className="curMonth"> {displayedMonthDesc} </span>
-                        <span className="curYear"> {displayedComp}</span>
-                        <span className="curYear"> {displayedDay}</span>
-                    </div>
-
-                    <div className="buttons">
-                        <span className="nextMonth" onClick={this.handleGoPrevMonth}> &lt; </span>
-                        <span className="prevMonth" onClick={this.handleGoNextMonth}> &gt; </span>
-                    </div>
-
-                </div>
+                <CalendarDDSapo
+                    monthDesc={this.props.info.monthDesc}
+                    showBtns={true}
+                    displayDate={displayDate}
+                    onNext={this.handleGoNextMonth}
+                    onPrev={this.handleGoPrevMonth}
+                />
                 <table className="daytable">
                     <thead>
                         <tr>
@@ -88,8 +116,12 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
                         {this.props.info.monthDays.getMonthDays().map((week, index) =>
                             <tr key={index}>
                                 {week.map((d, ind) =>
-                                    // tslint:disable-next-line:max-line-length
-                                    <CalendarDropDownDay key={ind} dayinfo={d} sel={this.isSelectedDay(displayDate, d)} selectedDay={d.currentMonth ? this.handleSelectedDay : undefined} />
+                                    <CalendarDropDownDay
+                                        key={ind}
+                                        dayinfo={d}
+                                        sel={this.isSelectedDay(displayDate, d)}
+                                        selectedDay={d.currentMonth ? this.handleSelectedDay : undefined}
+                                    />
                                 )}
                             </tr>)
                         }
@@ -159,24 +191,15 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
     }
 
     render() {
-        const displayedMonthDesc = this.props.info.monthDesc[this.props.info.displayDate.month()];
-        const displayedComp = this.props.info.displayDate.year();
         const monthMatrix = listToMatrix(this.props.info.monthDesc, 4);
-
         return (
             <div className="cdrop">
-                <div className="zone">
-                    <div className="one">
-                        <span className="curMonth"> {displayedMonthDesc} </span>
-                        <span className="curYear"> {displayedComp}</span>
-                    </div>
 
-                    <div className="buttons">
-                        <span className="nextMonth" onClick={this.handleGoPrevMonth}> &lt; </span>
-                        <span className="prevMonth" onClick={this.handleGoNextMonth}> &gt; </span>
-                    </div>
-
-                </div>
+                <CalendarDDSapo
+                    monthDesc={this.props.info.monthDesc}
+                    showBtns={false}
+                    displayDate={this.props.info.displayDate}
+                />
 
                 <table className="monthtable">
                     <tbody>
@@ -244,25 +267,16 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
     }
 
     render() {
-        const displayedMonthDesc = this.props.info.monthDesc[this.props.info.displayDate.month()];
-        const displayedComp = this.props.info.displayDate.year();
-
         const yearsMat = this.props.info.yearsViewPort.content();
         return (
             <div className="cdrop">
-                <div className="zone">
-                    <div className="one">
-                        <span className="curMonth"> {displayedMonthDesc} </span>
-                        <span className="curYear"> {displayedComp}</span>
-                    </div>
-
-                    <div className="buttons">
-                        <span className="nextMonth" onClick={this.handleGoPrevMonth}> &lt; </span>
-                        <span className="prevMonth" onClick={this.handleGoNextMonth}> &gt; </span>
-                    </div>
-
-                </div>
-
+                <CalendarDDSapo
+                    monthDesc={this.props.info.monthDesc}
+                    showBtns={true}
+                    displayDate={this.props.info.displayDate}
+                    onNext={this.handleGoNextMonth}
+                    onPrev={this.handleGoPrevMonth}
+                />
                 <table className="yeartable">
 
                     <tbody>
@@ -283,7 +297,6 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
     }
 
     handleSelectedYear(year: number) {
-
         this.dispatcher.yearSelected(year);
     }
 
