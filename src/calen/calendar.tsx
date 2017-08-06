@@ -3,15 +3,13 @@ import './calendar.css';
 import { DayInfo, CalendarState, CalendarStateSubscriber, CalendarDispatcher, listToMatrix } from './data';
 import * as Mon from 'moment';
 
-export interface CalendarDDSapoProps {
+export class CalendarDDSapo extends React.Component<{
     showBtns: boolean;
     monthDesc: string[];
     displayDate: Mon.Moment;
     onPrev?: () => void;
     onNext?: () => void;
-}
-
-export class CalendarDDSapo extends React.Component<CalendarDDSapoProps> {
+}> {
 
     renderBtns() {
         return (
@@ -40,39 +38,35 @@ export class CalendarDDSapo extends React.Component<CalendarDDSapoProps> {
 
 // ================================
 
-interface CDDownDayProps {
+export function CalendarDropDownDay(props: {
     dayinfo: DayInfo;
     selectedDay?: (day: number) => void | undefined;
     sel: boolean;
-}
+}) {
 
-export class CalendarDropDownDay extends React.Component<CDDownDayProps> {
-
-    constructor(props: CDDownDayProps) {
-        super(props);
-        this.handleSelectedDay = this.handleSelectedDay.bind(this);
-    }
-
-    render() {
-        return (
-            // tslint:disable-next-line:max-line-length
-            <td className={this.cssClass()} onClick={this.handleSelectedDay}> {this.props.dayinfo.day}
-            </td>);
-    }
-
-    cssClass() {
-        if (this.props.sel) {
+    function cssClass() {
+        if (props.sel) {
             return 'day-selected';
         }
-        return this.props.dayinfo.currentMonth ? 'day' : 'day-inactive';
+        return props.dayinfo.currentMonth ? 'day' : 'day-inactive';
     }
 
-    handleSelectedDay() {
-        let callback = this.props.selectedDay;
+    function handleSelectedDay() {
+        let callback = props.selectedDay;
         if (callback) {
-            callback(this.props.dayinfo.day);
+            callback(props.dayinfo.day);
         }
     }
+
+    return (
+        <td
+            className={cssClass()}
+            onClick={handleSelectedDay}
+        >
+            {props.dayinfo.day}
+        </td>
+    );
+
 }
 
 // =============================
@@ -135,7 +129,6 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
     }
 
     handleSelectedDay(day: number) {
-
         this.props.dispatcher.daySelected(day);
     }
 
@@ -183,11 +176,11 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
     }
 
     renderMonth(month: string, num: number, isSelected: boolean, onYearSelected: (month: number) => void) {
-        function intonYearSelected() {
+        function handleYearSelected() {
             onYearSelected(num);
         }
         const css = isSelected ? 'monthSelected' : '';
-        return (<td key={month} onClick={intonYearSelected} className={css}>{month}</td>);
+        return (<td key={month} onClick={handleYearSelected} className={css}>{month}</td>);
     }
 
     render() {
