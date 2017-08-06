@@ -9,6 +9,7 @@ export class CalendarDDToolbar extends React.Component<{
     displayDate: Mon.Moment;
     onPrev?: () => void;
     onNext?: () => void;
+    onBack?: () => void;
     onMonth?: () => void;
     onYear?: () => void;
 }> {
@@ -32,6 +33,7 @@ export class CalendarDDToolbar extends React.Component<{
                     <span className="curYear" onClick={this.props.onYear}> {displayedComp}</span>
                 </div>
 
+                {this.props.onBack ? <span className="back" onClick={this.props.onBack}> * </span> : false}
                 {this.props.showBtns ? this.renderBtns() : false}
 
             </div>);
@@ -185,8 +187,8 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
         this.dispatcher = this.props.dispatcher;
 
         this.handleSelectedMonth = this.handleSelectedMonth.bind(this);
-        this.handleGoPrevMonth = this.handleGoPrevMonth.bind(this);
-        this.handleGoNextMonth = this.handleGoNextMonth.bind(this);
+        this.handleGoBack = this.handleGoBack.bind(this);
+        this.handleGoYearsList = this.handleGoYearsList.bind(this);
     }
 
     renderMonth(month: string, num: number, isSelected: boolean, onYearSelected: (month: number) => void) {
@@ -206,6 +208,8 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
                     monthDesc={this.props.info.monthDesc}
                     showBtns={false}
                     displayDate={this.props.info.displayDate}
+                    onBack={this.handleGoBack}
+                    onYear={this.handleGoYearsList}
                 />
 
                 <table className="monthtable">
@@ -214,7 +218,7 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
                             <tr key={index}>
                                 {row.map((desc, ind) => {
                                     let monthNum = (index * 4) + ind;
-                                    let selected = this.isToSelectedYear(monthNum);
+                                    let selected = this.isToSelectedMonth(monthNum);
                                     return this.renderMonth(desc, monthNum, selected, this.handleSelectedMonth);
                                 })}
                             </tr>
@@ -227,19 +231,18 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
     }
 
     handleSelectedMonth(month: number) {
-
         this.dispatcher.monthSelected(month);
     }
 
-    handleGoPrevMonth() {
-        this.dispatcher.displayDateGoPrevMonthAction();
+    handleGoBack() {
+        this.dispatcher.showDays();
     }
 
-    handleGoNextMonth() {
-        this.dispatcher.displayDateGoNextMonthAction();
+    handleGoYearsList() {
+        this.dispatcher.showYearsList();
     }
 
-    private isToSelectedYear(month: number): boolean {
+    private isToSelectedMonth(month: number): boolean {
         let monthSel = this.props.info.selectedDateByUser ? this.props.info.selectedDateByUser.month() : -1;
         return monthSel === month;
     }
@@ -261,8 +264,10 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
         this.dispatcher = this.props.dispatcher;
 
         this.handleSelectedYear = this.handleSelectedYear.bind(this);
-        this.handleGoPrevMonth = this.handleGoPrevMonth.bind(this);
-        this.handleGoNextMonth = this.handleGoNextMonth.bind(this);
+        this.handleScrollUp = this.handleScrollUp.bind(this);
+        this.handleScrollDown = this.handleScrollDown.bind(this);
+        this.handleGoDaysList = this.handleGoDaysList.bind(this);
+        this.handleGoMonthsList = this.handleGoMonthsList.bind(this);
     }
 
     renderYear(year: number, isSelected: boolean, onYearSelected: (year: number) => void) {
@@ -281,8 +286,10 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
                     monthDesc={this.props.info.monthDesc}
                     showBtns={true}
                     displayDate={this.props.info.displayDate}
-                    onNext={this.handleGoNextMonth}
-                    onPrev={this.handleGoPrevMonth}
+                    onNext={this.handleScrollDown}
+                    onPrev={this.handleScrollUp}
+                    onBack={this.handleGoDaysList}
+                    onMonth={this.handleGoMonthsList}
                 />
                 <table className="yeartable">
 
@@ -307,12 +314,20 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
         this.dispatcher.yearSelected(year);
     }
 
-    handleGoPrevMonth() {
+    handleScrollUp() {
         this.dispatcher.yearViewPortMoveUp();
     }
 
-    handleGoNextMonth() {
+    handleScrollDown() {
         this.dispatcher.yearViewPortMoveDown();
+    }
+
+    handleGoDaysList() {
+        this.dispatcher.showDays();
+    }
+
+    handleGoMonthsList() {
+        this.dispatcher.showMonthsList();
     }
 
     private isSelectedYear(year: number) {
