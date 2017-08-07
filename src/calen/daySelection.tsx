@@ -64,6 +64,8 @@ export class CalendarDays extends React.Component<PropsDays> {
     }
 
     render() {
+        // tslint:disable-next-line:no-console
+        console.log('render DaySelectionView %s ', this.props.info.displayDate);
         const displayDate = this.props.info.displayDate;
         return (
             <div className="cdrop">

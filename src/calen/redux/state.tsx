@@ -9,8 +9,11 @@ export class CalendarState {
     displayDate: Mom.Moment;
     lastSelectedDate: Mom.Moment;
     selectedDateByUser: Mom.Moment;
+
+    // locale
     weakDays: string[];
     monthDesc: string[];
+
     monthDays = new MonthDays();
     yearsViewPort = new ViewPort(YEARS_MATRIX, YEAR_VIRE_PORT_LINE);
 
