@@ -2,9 +2,8 @@
 // import * as React from 'react';
 import * as Mom from 'moment';
 import {
-    MonthDays, listToMatrix, yearsMatrix, findRowOfyear,
-    showYearInViewPort, vpMoveup, vpMoveDown, vpEndLine
-} from './data';
+    MonthDays, listToMatrix, yearsMatrix, findRowOfyear
+} from './redux/utils';
 
 it('renders the correct text when no enthusiasm level is given', () => {
     let a = { year: 2017, month: 7 - 1, day: 1 };
@@ -54,7 +53,7 @@ it('years', () => {
     expect(numRow).toEqual(16);
     expect(yearsMat[numRow][2]).toEqual(2018);
 
-    const viewPortMaxLines = 6;
+    /*const viewPortMaxLines = 6;
     expect(showYearInViewPort(yearsMat, viewPortMaxLines, 1920)).toBe(0);
     expect(showYearInViewPort(yearsMat, viewPortMaxLines, 1926)).toBe(0);
     expect(showYearInViewPort(yearsMat, viewPortMaxLines, 1932)).toBe(0);
@@ -66,6 +65,6 @@ it('years', () => {
     expect(vpMoveDown(yearsMat, 29)).toBe(29);
     expect(vpMoveDown(yearsMat, 30)).toBe(29);
 
-    expect(vpEndLine(yearsMat, 0, 6)).toBe(5);
+    expect(vpEndLine(yearsMat, 0, 6)).toBe(5);*/
 
 });

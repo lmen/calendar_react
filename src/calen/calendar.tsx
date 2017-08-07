@@ -2,7 +2,9 @@ import * as React from 'react';
 import './calendar.css';
 import * as Mon from 'moment';
 import { CalendarDropDown } from './dropDown';
-import { CalendarState, MONTH_DESC, WEAK_DAYS, CalendarDispatcher, CalendarStateSubscriber } from './data';
+import { CalendarState } from './redux/state';
+import { CalendarStateSubscriber, CalendarDispatcher } from './redux/dispatcher';
+import { WEAK_DAYS, MONTH_DESC } from './redux/locale';
 
 interface CProps {
     date: Mon.Moment;
