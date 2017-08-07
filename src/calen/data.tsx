@@ -1,15 +1,16 @@
 import * as Mom from 'moment';
 
+export const WEAK_DAYS = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
+export const MONTH_DESC = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto',
+    'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
 export interface DayInfo {
     day: number;
     currentMonth: boolean;
-    selected: boolean;
 }
 
 export class MonthDays {
     private data: DayInfo[][] = [];
-    private displayDate: Mom.Moment;
-    private selectedDate: Mom.Moment;
 
     constructor() {
         this.init();
@@ -21,45 +22,30 @@ export class MonthDays {
 
     public fillMonthDays(displayDate: Mom.Moment) {
         let info = { year: displayDate.year(), month: displayDate.month(), day: 1 }; // month is zero based
-        let first = Mom(info);
-        this.displayDate = first;
+        let firstDayOfDisplayMonth = Mom(info);
 
-        let firstWeekDate = first.isoWeekday() - 1;
-        let last = Mom(info);
+        let dayToDisplay = Mom(firstDayOfDisplayMonth);
+
+        let firstWeekDate = firstDayOfDisplayMonth.isoWeekday() - 1;
         if (firstWeekDate !== 0) {
-            last = Mom(info).subtract(firstWeekDate, 'd');
+            dayToDisplay = Mom(info).subtract(firstWeekDate, 'd');
         }
 
-        for (let r = 0; r < 6; r++) {
-            for (let j = 0; j < 7; j++) {
-                let d = this.data[r][j];
-                d.day = last.date();
-                d.currentMonth = last.month() === first.month();
-                d.selected = this.selectedDate
-                    && d.currentMonth && this.displayDate.day(d.day).isSame(this.selectedDate.day());
-                last.add(1, 'd');
-            }
-        }
-    }
-
-    public daySelected(selectedDate: Mom.Moment) {
-        this.selectedDate = selectedDate.clone();
-        let display = Mom(this.displayDate).startOf('hour');
-
-        for (let r = 0; r < 6; r++) {
-            let s = this.data[r];
-            for (let j = 0; j < 7; j++) {
-                let d = s[j];
-                d.selected = d.currentMonth && display.day(d.day).isSame(this.selectedDate.day());
+        for (let weekDay = 0; weekDay < 6; weekDay++) {
+            for (let week = 0; week < 7; week++) {
+                let d = this.data[weekDay][week];
+                d.day = dayToDisplay.date();
+                d.currentMonth = dayToDisplay.month() === firstDayOfDisplayMonth.month();
+                dayToDisplay.add(1, 'd');
             }
         }
     }
 
     private init() {
-        for (let r = 0; r < 6; r++) {
+        for (let weekDay = 0; weekDay < 6; weekDay++) {
             let s: DayInfo[] = [];
-            for (let j = 0; j < 7; j++) {
-                s.push({ day: 0, currentMonth: false, selected: false });
+            for (let week = 0; week < 7; week++) {
+                s.push({ day: 0, currentMonth: false });
             }
             this.data.push(s);
         }
@@ -82,9 +68,9 @@ export class CalendarState {
     yearsViewPort = new ViewPort(YEARS_MATRIX, YEAR_VIRE_PORT_LINE);
 
     constructor(
-        weakDays: string[], monthDesc: string[], displayDate: Mom.Moment) {
-        this.weakDays = weakDays;
-        this.monthDesc = monthDesc;
+        weakDaysTo: string[], monthDescTo: string[], displayDate: Mom.Moment) {
+        this.weakDays = weakDaysTo;
+        this.monthDesc = monthDescTo;
         this.displayDate = displayDate;
     }
 
@@ -171,8 +157,6 @@ export class CalendarDispatcher {
         }
 
         this.state.selectedDateByUser = newDisplayDate;
-        this.state.displayDate = newDisplayDate;
-        this.state.monthDays.fillMonthDays(newDisplayDate);
 
         this.sendToSubscribers();
     }
