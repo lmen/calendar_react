@@ -374,7 +374,8 @@ export class CalendarDropDown extends React.Component<CDDownProps> {
 
 // ==============
 interface CProps {
-
+    date: Mon.Moment;
+    onDateChange: (newDate: Mon.Moment) => void;
 }
 
 const weakDays = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
@@ -387,11 +388,12 @@ export class Calendar extends React.Component<CProps, CalendarState> implements 
 
     constructor(props: CProps) {
         super(props);
-        let currDate = Mon({ year: 2017, month: 7 - 1, day: 20 });
+
+        let currDate = this.props.date;
 
         this.state = new CalendarState(weakDays, monthDesc, currDate);
         this.dispatcher = new CalendarDispatcher(this, this.state);
-        this.handleReset = this.handleReset.bind(this);
+        this.handleChange = this.handleChange.bind(this);
 
         this.dispatcher.init(currDate);
     }
@@ -399,23 +401,23 @@ export class Calendar extends React.Component<CProps, CalendarState> implements 
     render() {
         return (
             <div>
-                <input value="op" onClick={this.handleReset} onFocus={this.handleReset} />
+                <input
+                    value={this.state.selectedDateByUser.format()}
+                    onChange={this.handleChange}
+                />
                 <CalendarDropDown info={this.state} dispatcher={this.dispatcher} />
-                {/*
-                < CalendarDays info={this.state} dispatcher={this.dispatcher} />
-                < CalendarMonthSelect info={this.state} dispatcher={this.dispatcher} />
-                < CalendarYearSelect info={this.state} dispatcher={this.dispatcher} />
-                */}
             </div>
         );
     }
 
-    handleReset() {
-        // console.log('Focus');
+    handleChange() {
+        console.log('handle change: %s', this.state.selectedDateByUser);
     }
 
     handleCalendarStateChange(newState: CalendarState): void {
-        this.setState((prevState) => {
+        this.setState((prevState, props) => {
+            console.log('handle change2: %s', this.state.selectedDateByUser);
+            props.onDateChange(this.state.selectedDateByUser);
             return newState;
         });
     }

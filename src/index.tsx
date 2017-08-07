@@ -12,7 +12,7 @@ import { StoreState } from './types/index';
 // import { Provider } from 'react-redux';
 // import { TimerView } from './mobx/comp';
 // import appState from './mobx/test';
-import { Calendar } from './calen/calendar';
+import { Form } from './form';
 
 /*const store = createStore<StoreState>(enthusiasm, {
   enthusiasmLevel: 2,
@@ -24,7 +24,7 @@ import { Calendar } from './calen/calendar';
 </Provider>,*/
 
 ReactDOM.render(
-  <Calendar />,
+  <Form />,
   document.getElementById('root') as HTMLElement
 );
 registerServiceWorker();
