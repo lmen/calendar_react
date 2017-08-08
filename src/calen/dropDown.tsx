@@ -12,28 +12,16 @@ interface CDDownProps {
 
 export class CalendarDropDown extends React.Component<CDDownProps> {
 
-    renderDays() {
-        return (
-            < CalendarDays info={this.props.info} dispatcher={this.props.dispatcher} />
-        );
-    }
-
-    renderMonthsList() {
-        return (
-            < CalendarMonthSelect info={this.props.info} dispatcher={this.props.dispatcher} />
-        );
-    }
-
-    rendersYearsList() {
-        return (
-            < CalendarYearSelect info={this.props.info} dispatcher={this.props.dispatcher} />
-        );
-    }
-
     render() {
         const view = this.props.info.currentView;
-        return ((view === VIEW.DAY ? this.renderDays() :
-            (view === VIEW.MONTH_LIST ? this.renderMonthsList() : this.rendersYearsList()))
+        return (
+            (view === VIEW.DAY
+                ? < CalendarDays info={this.props.info} dispatcher={this.props.dispatcher} />
+                : (view === VIEW.MONTH_LIST
+                    ? < CalendarMonthSelect info={this.props.info} dispatcher={this.props.dispatcher} />
+                    : < CalendarYearSelect info={this.props.info} dispatcher={this.props.dispatcher} />
+                )
+            )
         );
     }
 
