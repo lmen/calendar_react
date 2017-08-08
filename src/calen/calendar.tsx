@@ -40,7 +40,6 @@ export class Calendar extends React.Component<CProps, CalendarState> implements 
     }
 
     handleChange() {
-        // tslint:disable-next-line:no-console
         console.log('handle change: %s', this.state.selectedDateByUser);
     }
 
@@ -48,7 +47,7 @@ export class Calendar extends React.Component<CProps, CalendarState> implements 
         this.setState((prevState, props) => {
             // tslint:disable-next-line:no-console
             console.log('handle change2: %s', this.state.selectedDateByUser);
-            props.onDateChange(this.state.selectedDateByUser);
+            // props.onDateChange(this.state.selectedDateByUser);
             return newState;
         });
     }

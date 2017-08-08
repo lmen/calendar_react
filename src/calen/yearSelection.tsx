@@ -3,12 +3,45 @@ import { CalendarDDToolbar } from './toolbar';
 import { CalendarState } from './redux/state';
 import { CalendarDispatcher } from './redux/dispatcher';
 
+interface Props {
+    year: number;
+    isSelected: boolean;
+    onYearSelected: (year: number) => void;
+}
+
+export class Year extends React.PureComponent<Props> {
+
+    constructor(props: Props) {
+        super(props);
+
+        this.handleYearSelected = this.handleYearSelected.bind(this);
+    }
+
+    handleYearSelected() {
+        this.props.onYearSelected(this.props.year);
+    }
+
+    render() {
+        console.log('render Year %s', this.props.year);
+        const css = this.props.isSelected ? 'yearSelected' : '';
+
+        return (
+            <td
+                onClick={this.handleYearSelected}
+                className={css}
+            >
+                {this.props.year}
+            </td>);
+    }
+
+}
+
 interface CYearSelectProps {
     info: CalendarState;
     dispatcher: CalendarDispatcher;
 }
 
-export class CalendarYearSelect extends React.Component<CYearSelectProps> {
+export class CalendarYearSelect extends React.PureComponent<CYearSelectProps> {
 
     private dispatcher: CalendarDispatcher;
 
@@ -23,15 +56,9 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
         this.handleGoMonthsList = this.handleGoMonthsList.bind(this);
     }
 
-    renderYear(year: number, isSelected: boolean, onYearSelected: (year: number) => void) {
-        function intonYearSelected() {
-            onYearSelected(year);
-        }
-        const css = isSelected ? 'yearSelected' : '';
-        return (<td key={year} onClick={intonYearSelected} className={css}>{year}</td>);
-    }
-
     render() {
+        console.log('render CalendarYearSelect');
+
         const yearsMat = this.props.info.yearsViewPort.content();
         return (
             <div className="cdrop">
@@ -50,7 +77,12 @@ export class CalendarYearSelect extends React.Component<CYearSelectProps> {
                         {yearsMat.map((row, index) =>
                             <tr key={index}>
                                 {row.map((d, ind) =>
-                                    this.renderYear(d, this.isSelectedYear(d), this.handleSelectedYear)
+                                    <Year
+                                        key={d.toString()}
+                                        year={d}
+                                        isSelected={this.isSelectedYear(d)}
+                                        onYearSelected={this.handleSelectedYear}
+                                    />
                                 )}
                             </tr>
                         )

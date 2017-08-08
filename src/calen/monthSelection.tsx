@@ -4,12 +4,39 @@ import { CalendarState } from './redux/state';
 import { listToMatrix } from './redux/utils';
 import { CalendarDispatcher } from './redux/dispatcher';
 
+interface Props {
+    month: string;
+    num: number;
+    isSelected: boolean;
+    onMonthSelected: (month: number) => void;
+}
+
+class Month extends React.PureComponent<Props> {
+
+    constructor(props: Props) {
+        super(props);
+        this.handleYearSelected = this.handleYearSelected.bind(this);
+    }
+
+    handleYearSelected() {
+        this.props.onMonthSelected(this.props.num);
+    }
+
+    render() {
+        console.log('render Month %s', this.props.num);
+
+        const css = this.props.isSelected ? 'monthSelected' : '';
+        return (<td onClick={this.handleYearSelected} className={css}>{this.props.month}</td>);
+    }
+
+}
+
 interface CMonthSelectProps {
     info: CalendarState;
     dispatcher: CalendarDispatcher;
 }
 
-export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
+export class CalendarMonthSelect extends React.PureComponent<CMonthSelectProps> {
 
     private dispatcher: CalendarDispatcher;
 
@@ -22,15 +49,9 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
         this.handleGoYearsList = this.handleGoYearsList.bind(this);
     }
 
-    renderMonth(month: string, num: number, isSelected: boolean, onYearSelected: (month: number) => void) {
-        function handleYearSelected() {
-            onYearSelected(num);
-        }
-        const css = isSelected ? 'monthSelected' : '';
-        return (<td key={month} onClick={handleYearSelected} className={css}>{month}</td>);
-    }
-
     render() {
+        console.log('Render MonthSelection');
+
         const monthMatrix = listToMatrix(this.props.info.monthDesc, 4);
         return (
             <div className="cdrop">
@@ -50,7 +71,15 @@ export class CalendarMonthSelect extends React.Component<CMonthSelectProps> {
                                 {row.map((desc, ind) => {
                                     let monthNum = (index * 4) + ind;
                                     let selected = this.isToSelectedMonth(monthNum);
-                                    return this.renderMonth(desc, monthNum, selected, this.handleSelectedMonth);
+                                    return (
+                                        <Month
+                                            key={desc}
+                                            month={desc}
+                                            num={monthNum}
+                                            isSelected={selected}
+                                            onMonthSelected={this.handleSelectedMonth}
+                                        />
+                                    );
                                 })}
                             </tr>
                         )}

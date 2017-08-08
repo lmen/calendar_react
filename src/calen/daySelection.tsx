@@ -12,32 +12,39 @@ interface Props {
     sel: boolean;
 }
 
-export function CalendarDropDownDay(props: Props) {
+export class CalendarDropDownDay extends React.PureComponent<Props> {
 
-    function cssClass() {
-        if (props.sel) {
+    constructor(props: Props) {
+        super(props);
+
+        this.handleSelectedDay = this.handleSelectedDay.bind(this);
+    }
+
+    cssClass() {
+        if (this.props.sel) {
             return 'day-selected';
         }
-        return props.dayinfo.currentMonth ? 'day' : 'day-inactive';
+        return this.props.dayinfo.currentMonth ? 'day' : 'day-inactive';
     }
 
-    function handleSelectedDay() {
-        let callback = props.selectedDay;
+    handleSelectedDay() {
+        let callback = this.props.selectedDay;
         if (callback) {
-            callback(props.dayinfo.day);
+            callback(this.props.dayinfo.day);
         }
     }
 
-    // tslint:disable-next-line:no-console
-    console.log('CalendarDropDownDay %s props sel: %s', props.dayinfo.day, props.sel);
-    return (
-        <td
-            className={cssClass()}
-            onClick={handleSelectedDay}
-        >
-            {props.dayinfo.day}
-        </td>
-    );
+    render() {
+        console.log('CalendarDropDownDay %s props sel: %s', this.props.dayinfo.day, this.props.sel);
+        return (
+            <td
+                className={this.cssClass()}
+                onClick={this.handleSelectedDay}
+            >
+                {this.props.dayinfo.day}
+            </td>
+        );
+    }
 
 }
 
@@ -48,7 +55,7 @@ interface PropsDays {
     dispatcher: CalendarDispatcher;
 }
 
-export class CalendarDays extends React.Component<PropsDays> {
+export class CalendarDays extends React.PureComponent<PropsDays> {
 
     private dispatcher: CalendarDispatcher;
 
