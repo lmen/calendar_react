@@ -12,7 +12,7 @@ interface Props {
     sel: boolean;
 }
 
-export class CalendarDropDownDay extends React.PureComponent<Props> {
+export class CalendarDropDownDay extends React.Component<Props> {
 
     constructor(props: Props) {
         super(props);

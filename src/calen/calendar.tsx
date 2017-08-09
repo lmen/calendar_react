@@ -11,7 +11,7 @@ interface CProps {
     onDateChange: (newDate: Mon.Moment) => void;
 }
 
-export class Calendar extends React.Component<CProps, CalendarState> implements CalendarStateSubscriber {
+export class Calendar extends React.PureComponent<CProps, CalendarState> implements CalendarStateSubscriber {
 
     private dispatcher: CalendarDispatcher;
 
@@ -44,12 +44,15 @@ export class Calendar extends React.Component<CProps, CalendarState> implements 
     }
 
     handleCalendarStateChange(newState: CalendarState): void {
-        this.setState((prevState, props) => {
-            // tslint:disable-next-line:no-console
-            console.log('handle change2: %s', this.state.selectedDateByUser);
-            // props.onDateChange(this.state.selectedDateByUser);
-            return newState;
-        });
+        this.setState(
+            (prevState, props) => {
+                console.log('handle change2: %s', this.state.selectedDateByUser);
+                return newState;
+            },
+            () => {
+                this.props.onDateChange(this.state.selectedDateByUser);
+            }
+        );
     }
 
 }

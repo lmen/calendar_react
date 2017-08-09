@@ -10,18 +10,25 @@ interface CDDownProps {
     dispatcher: CalendarDispatcher;
 }
 
-export class CalendarDropDown extends React.Component<CDDownProps> {
+export class CalendarDropDown extends React.PureComponent<CDDownProps> {
 
     render() {
         const view = this.props.info.currentView;
+        const selectDate = this.props.info.selectedDateByUser;
         return (
-            (view === VIEW.DAY
-                ? < CalendarDays info={this.props.info} dispatcher={this.props.dispatcher} />
-                : (view === VIEW.MONTH_LIST
-                    ? < CalendarMonthSelect info={this.props.info} dispatcher={this.props.dispatcher} />
-                    : < CalendarYearSelect info={this.props.info} dispatcher={this.props.dispatcher} />
-                )
-            )
+            <div className="dropDown">
+                <div className="">
+                    {!selectDate ? 'Select a date' : selectDate.format('YYYY-MM-DD')}
+                </div>
+                <div className="viewZone">
+                    {view === VIEW.DAY
+                        ? < CalendarDays info={this.props.info} dispatcher={this.props.dispatcher} />
+                        : (view === VIEW.MONTH_LIST
+                            ? < CalendarMonthSelect info={this.props.info} dispatcher={this.props.dispatcher} />
+                            : < CalendarYearSelect info={this.props.info} dispatcher={this.props.dispatcher} />)
+                    }
+                </div>
+            </div>
         );
     }
 
