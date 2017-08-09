@@ -74,6 +74,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
         // tslint:disable-next-line:no-console
         console.log('render DaySelectionView %s ', this.props.info.displayDate);
         const displayDate = this.props.info.displayDate;
+        const dayToSelect = this.calculateSelDay(displayDate, this.props.info.selectedDateByUser);
         return (
             <div className="cdrop">
                 <CalendarDDToolbar
@@ -98,7 +99,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
                                     <CalendarDropDownDay
                                         key={ind}
                                         dayinfo={d}
-                                        sel={this.isSelectedDay(displayDate, d)}
+                                        sel={d.currentMonth && d.day === dayToSelect}
                                         selectedDay={d.currentMonth ? this.handleSelectedDay : undefined}
                                     />
                                 )}
@@ -133,17 +134,21 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
         this.dispatcher.showYearsListView();
     }
 
-    private isSelectedDay(displayDate: Mon.Moment, dayInfo: DayInfo) {
-        if (!dayInfo.currentMonth || !this.props.info.selectedDateByUser) {
-            return false;
+    private calculateSelDay(displayDate: Mon.Moment, selectedDateByUser: Mon.Moment) {
+        if (!selectedDateByUser) {
+            return -1;
         }
 
         let selDay = -1, selyear = -1, selmonth = -1;
-        selDay = this.props.info.selectedDateByUser.date();
-        selyear = this.props.info.selectedDateByUser.year();
-        selmonth = this.props.info.selectedDateByUser.month();
+        selyear = selectedDateByUser.year();
+        selmonth = selectedDateByUser.month();
 
-        return selDay === dayInfo.day && selmonth === displayDate.month() && selyear === displayDate.year();
+        if (!(selmonth === displayDate.month() && selyear === displayDate.year())) {
+            return -1;
+        }
+        selDay = selectedDateByUser.date();
+
+        return selDay;
     }
 
 }
