@@ -21,7 +21,6 @@ export class CalendarDispatcher {
         this.state.lastSelectedDate = selectedDate;
         this.state.selectedDateByUser = selectedDate;
 
-        this.state.monthDays.fillMonthDays(selectedDate);
         this.state.yearsViewPort.showYear(selectedDate.year());
 
         // Is to be called on a component constructor, don't inform the subscriber
@@ -50,7 +49,6 @@ export class CalendarDispatcher {
         // this.state.selectedDateByUser = newDisplayDate;
         this.state.currentView = VIEW.DAY;
         this.state.displayDate = newDisplayDate;
-        this.state.monthDays.fillMonthDays(newDisplayDate);
 
         this.sendToSubscribers();
     }
@@ -66,7 +64,6 @@ export class CalendarDispatcher {
 
         this.state.currentView = VIEW.DAY;
         this.state.displayDate = newDisplayDate;
-        this.state.monthDays.fillMonthDays(newDisplayDate);
 
         this.sendToSubscribers();
     }
@@ -88,14 +85,12 @@ export class CalendarDispatcher {
 
     dayViewGotoPrevMonth() {
         this.state.displayDate = this.state.displayDate.clone().subtract(1, 'M');
-        this.state.monthDays.fillMonthDays(this.state.displayDate);
 
         this.sendToSubscribers();
     }
 
     dayViewGotoNextMonth() {
         this.state.displayDate = this.state.displayDate.clone().add(1, 'M');
-        this.state.monthDays.fillMonthDays(this.state.displayDate);
 
         this.sendToSubscribers();
     }

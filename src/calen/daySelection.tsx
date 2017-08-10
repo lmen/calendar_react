@@ -1,18 +1,19 @@
 import * as React from 'react';
 import * as Mon from 'moment';
 import { CalendarState } from './redux/state';
-import { DayInfo } from './redux/utils';
+import { MonthDays } from './redux/utils';
 import { CalendarDDToolbar } from './toolbar';
 import { CalendarDispatcher } from './redux/dispatcher';
 import { WEAK_DAYS } from './redux/locale';
 
 interface Props {
-    dayinfo: DayInfo;
-    selectedDay?: (day: number) => void | undefined;
+    day: number;
+    currentMonth: boolean;
     sel: boolean;
+    onSelectedDay?: (day: number) => void | undefined;
 }
 
-export class CalendarDropDownDay extends React.Component<Props> {
+export class CalendarDropDownDay extends React.PureComponent<Props> {
 
     constructor(props: Props) {
         super(props);
@@ -24,24 +25,35 @@ export class CalendarDropDownDay extends React.Component<Props> {
         if (this.props.sel) {
             return 'day-selected';
         }
-        return this.props.dayinfo.currentMonth ? 'day' : 'day-inactive';
+        return this.props.currentMonth ? 'day' : 'day-inactive';
     }
 
     handleSelectedDay() {
-        let callback = this.props.selectedDay;
+        let callback = this.props.onSelectedDay;
         if (callback) {
-            callback(this.props.dayinfo.day);
+            callback(this.props.day);
         }
     }
 
+    shouldComponentUpdate(nextProps: Props, nestState: {}, nextContext: {}): boolean {
+        let res = !(nextProps.day === this.props.day && nextProps.sel === this.props.sel);
+        console.log(
+            'CalendatDropDownDay shouldComponentUpdate=%s: %s == %s, %s == %s',
+            res,
+            nextProps.sel, this.props.sel,
+            nextProps.day, this.props.day);
+
+        return res;
+    }
+
     render() {
-        console.log('CalendarDropDownDay %s props sel: %s', this.props.dayinfo.day, this.props.sel);
+        console.log('CalendarDropDownDay render day: %s props sel: %s', this.props.day, this.props.sel);
         return (
             <td
                 className={this.cssClass()}
                 onClick={this.handleSelectedDay}
             >
-                {this.props.dayinfo.day}
+                {this.props.day}
             </td>
         );
     }
@@ -71,10 +83,12 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
     }
 
     render() {
-        // tslint:disable-next-line:no-console
         console.log('render DaySelectionView %s ', this.props.info.displayDate);
+
         const displayDate = this.props.info.displayDate;
         const dayToSelect = this.calculateSelDay(displayDate, this.props.info.selectedDateByUser);
+        let monthDays = new MonthDays();
+        monthDays.fillMonthDays(displayDate);
         return (
             <div className="cdrop">
                 <CalendarDDToolbar
@@ -93,21 +107,20 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.props.info.monthDays.getMonthDays().map((week, index) =>
+                        {monthDays.getMonthDays().map((week, index) =>
                             <tr key={index}>
                                 {week.map((d, ind) =>
                                     <CalendarDropDownDay
                                         key={ind}
-                                        dayinfo={d}
+                                        day={d.day}
+                                        currentMonth={d.currentMonth}
                                         sel={d.currentMonth && d.day === dayToSelect}
-                                        selectedDay={d.currentMonth ? this.handleSelectedDay : undefined}
+                                        onSelectedDay={d.currentMonth ? this.handleSelectedDay : undefined}
                                     />
                                 )}
                             </tr>)
                         }
-
                     </tbody>
-
                 </table>
             </div>
         );

@@ -1,5 +1,5 @@
 import * as Mom from 'moment';
-import { yearsMatrix, ViewPort, MonthDays } from './utils';
+import { yearsMatrix, ViewPort } from './utils';
 
 export enum VIEW { DAY, MONTH_LIST, YEAR_LIST }
 
@@ -14,7 +14,6 @@ export class CalendarState {
     weakDays: string[];
     monthDesc: string[];
 
-    monthDays = new MonthDays();
     yearsViewPort = new ViewPort(YEARS_MATRIX, YEAR_VIRE_PORT_LINE);
 
     constructor(
