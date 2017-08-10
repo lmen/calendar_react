@@ -2,8 +2,13 @@ import * as React from 'react';
 import * as Mon from 'moment';
 import { MonthDays } from './redux/utils';
 import { CalendarDDToolbar } from './toolbar';
-import { CalendarDispatcher } from './redux/dispatcher';
-// import { WEAK_DAYS } from './redux/locale';
+import { Store } from './redux/dispatcher';
+import {
+    DayViewSelected, DayViewGotoPrevMonth,
+    DayViewGotoNextMonth, ShowMonthsListView, ShowYearsListView
+}
+    from './redux/actions';
+import { WEAK_DAYS } from './redux/locale';
 
 interface Props {
     day: number;
@@ -65,12 +70,12 @@ interface PropsDays {
     displayDate: Mon.Moment;
     selectedDate: Mon.Moment;
     monthDesc: string[];
-    dispatcher: CalendarDispatcher;
+    dispatcher: Store;
 }
 
 export class CalendarDays extends React.PureComponent<PropsDays> {
 
-    private dispatcher: CalendarDispatcher;
+    private dispatcher: Store;
 
     constructor(props: PropsDays) {
         super(props);
@@ -87,7 +92,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
         console.log('render DaySelectionView %s ', this.props.displayDate);
 
         const displayDate = this.props.displayDate;
-        // const dayToSelect = this.calculateSelDay(displayDate, this.props.selectedDate);
+        const dayToSelect = this.calculateSelDay(displayDate, this.props.selectedDate);
         let monthDays = new MonthDays();
         monthDays.fillMonthDays(displayDate);
         return (
@@ -101,7 +106,6 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
                     onMonth={this.handleGoMonthsList}
                     onYear={this.handleGoYearsList}
                 />
-                { /*
                 <table className="daytable">
                     <thead>
                         <tr>
@@ -124,48 +128,47 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
                         }
                     </tbody>
                 </table>
-                */ }
             </div>
         );
 
     }
 
     handleSelectedDay(day: number) {
-        this.props.dispatcher.dayViewSelected(day);
+        this.props.dispatcher.apply(new DayViewSelected(day));
     }
 
     handleGoPrevMonth() {
-        this.dispatcher.dayViewGotoPrevMonth();
+        this.dispatcher.apply(new DayViewGotoPrevMonth());
     }
 
     handleGoNextMonth() {
         console.log('User click goto Next month');
-        this.dispatcher.dayViewGotoNextMonth();
+        this.dispatcher.apply(new DayViewGotoNextMonth());
     }
 
     handleGoMonthsList() {
-        this.dispatcher.showMonthsListView();
+        this.dispatcher.apply(new ShowMonthsListView());
     }
 
     handleGoYearsList() {
-        this.dispatcher.showYearsListView();
+        this.dispatcher.apply(new ShowYearsListView());
     }
-    /*
-        private calculateSelDay(displayDate: Mon.Moment, selectedDateByUser: Mon.Moment) {
-            if (!selectedDateByUser) {
-                return -1;
-            }
 
-            let selDay = -1, selyear = -1, selmonth = -1;
-            selyear = selectedDateByUser.year();
-            selmonth = selectedDateByUser.month();
-
-            if (!(selmonth === displayDate.month() && selyear === displayDate.year())) {
-                return -1;
-            }
-            selDay = selectedDateByUser.date();
-
-            return selDay;
+    private calculateSelDay(displayDate: Mon.Moment, selectedDateByUser: Mon.Moment) {
+        if (!selectedDateByUser) {
+            return -1;
         }
-    */
+
+        let selDay = -1, selyear = -1, selmonth = -1;
+        selyear = selectedDateByUser.year();
+        selmonth = selectedDateByUser.month();
+
+        if (!(selmonth === displayDate.month() && selyear === displayDate.year())) {
+            return -1;
+        }
+        selDay = selectedDateByUser.date();
+
+        return selDay;
+    }
+
 }

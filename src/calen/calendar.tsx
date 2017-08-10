@@ -3,8 +3,7 @@ import './calendar.css';
 import * as Mon from 'moment';
 import { CalendarDropDown } from './dropDown';
 import { CalendarState } from './redux/state';
-import { CalendarStateSubscriber, CalendarDispatcher } from './redux/dispatcher';
-import { MONTH_DESC, WEAK_DAYS } from './redux/locale';
+import { CalendarStateSubscriber, Store, } from './redux/dispatcher';
 
 interface CProps {
     date: Mon.Moment;
@@ -13,22 +12,23 @@ interface CProps {
 
 export class Calendar extends React.PureComponent<CProps, CalendarState> implements CalendarStateSubscriber {
 
-    private dispatcher: CalendarDispatcher;
+    private dispatcher: Store;
 
     constructor(props: CProps) {
         super(props);
 
         let currDate = this.props.date;
-        this.state = new CalendarState(WEAK_DAYS, MONTH_DESC);
-        this.dispatcher = new CalendarDispatcher(this, this.state);
+
+        this.dispatcher = new Store(currDate, this);
+
+        this.state = this.dispatcher.getCurrentState();
+
         this.handleChange = this.handleChange.bind(this);
 
         console.log(
             'Calender componentDidMount initial state: sel: %s display: %s',
             this.state.selectedDateByUser,
             this.state.displayDate);
-
-        this.dispatcher.init(currDate);
 
     }
 

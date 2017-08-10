@@ -3,11 +3,11 @@ import { CalendarState, VIEW } from './redux/state';
 import { CalendarDays } from './daySelection';
 import { CalendarMonthSelect } from './monthSelection';
 import { CalendarYearSelect } from './yearSelection';
-import { CalendarDispatcher } from './redux/dispatcher';
+import { Store } from './redux/dispatcher';
 
 interface CDDownProps {
     info: CalendarState;
-    dispatcher: CalendarDispatcher;
+    dispatcher: Store;
 }
 
 export class CalendarDropDown extends React.PureComponent<CDDownProps> {

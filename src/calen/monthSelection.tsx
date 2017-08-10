@@ -2,7 +2,8 @@ import * as React from 'react';
 import { CalendarDDToolbar } from './toolbar';
 import { CalendarState } from './redux/state';
 import { listToMatrix } from './redux/utils';
-import { CalendarDispatcher } from './redux/dispatcher';
+import { Store } from './redux/dispatcher';
+import { MonthViewSelected, ShowDaysView, ShowYearsListView } from './redux/actions';
 
 interface Props {
     month: string;
@@ -33,12 +34,12 @@ class Month extends React.PureComponent<Props> {
 
 interface CMonthSelectProps {
     info: CalendarState;
-    dispatcher: CalendarDispatcher;
+    dispatcher: Store;
 }
 
 export class CalendarMonthSelect extends React.PureComponent<CMonthSelectProps> {
 
-    private dispatcher: CalendarDispatcher;
+    private dispatcher: Store;
 
     constructor(props: CMonthSelectProps) {
         super(props);
@@ -91,15 +92,15 @@ export class CalendarMonthSelect extends React.PureComponent<CMonthSelectProps> 
     }
 
     handleSelectedMonth(month: number) {
-        this.dispatcher.monthViewSelected(month);
+        this.dispatcher.apply(new MonthViewSelected(month));
     }
 
     handleGoBack() {
-        this.dispatcher.showDaysView();
+        this.dispatcher.apply(new ShowDaysView());
     }
 
     handleGoYearsList() {
-        this.dispatcher.showYearsListView();
+        this.dispatcher.apply(new ShowYearsListView());
     }
 
     private isToSelectedMonth(month: number): boolean {

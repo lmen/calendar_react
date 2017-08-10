@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { CalendarDDToolbar } from './toolbar';
 import { CalendarState } from './redux/state';
-import { CalendarDispatcher } from './redux/dispatcher';
+import { Store } from './redux/dispatcher';
+import {
+    YearViewPortMoveDown, YearViewPortMoveUp,
+    YearViewSelected, ShowDaysView, ShowMonthsListView
+} from './redux/actions';
 
 interface Props {
     year: number;
@@ -38,12 +42,12 @@ export class Year extends React.PureComponent<Props> {
 
 interface CYearSelectProps {
     info: CalendarState;
-    dispatcher: CalendarDispatcher;
+    dispatcher: Store;
 }
 
 export class CalendarYearSelect extends React.PureComponent<CYearSelectProps> {
 
-    private dispatcher: CalendarDispatcher;
+    private dispatcher: Store;
 
     constructor(props: CYearSelectProps) {
         super(props);
@@ -96,23 +100,23 @@ export class CalendarYearSelect extends React.PureComponent<CYearSelectProps> {
     }
 
     handleSelectedYear(year: number) {
-        this.dispatcher.yearViewSelected(year);
+        this.dispatcher.apply(new YearViewSelected(year));
     }
 
     handleScrollUp() {
-        this.dispatcher.yearViewPortMoveUp();
+        this.dispatcher.apply(new YearViewPortMoveUp());
     }
 
     handleScrollDown() {
-        this.dispatcher.yearViewPortMoveDown();
+        this.dispatcher.apply(new YearViewPortMoveDown());
     }
 
     handleGoDaysList() {
-        this.dispatcher.showDaysView();
+        this.dispatcher.apply(new ShowDaysView());
     }
 
     handleGoMonthsList() {
-        this.dispatcher.showMonthsListView();
+        this.dispatcher.apply(new ShowMonthsListView());
     }
 
     private isSelectedYear(year: number) {
