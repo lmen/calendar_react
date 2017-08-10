@@ -17,10 +17,9 @@ export class CalendarState {
     yearsViewPort = new ViewPort(YEARS_MATRIX, YEAR_VIRE_PORT_LINE);
 
     constructor(
-        weakDaysTo: string[], monthDescTo: string[], displayDate: Mom.Moment) {
+        weakDaysTo: string[], monthDescTo: string[]) {
         this.weakDays = weakDaysTo;
         this.monthDesc = monthDescTo;
-        this.displayDate = displayDate;
     }
 
 }

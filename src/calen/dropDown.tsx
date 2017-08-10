@@ -22,7 +22,12 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
                 </div>
                 <div className="viewZone">
                     {view === VIEW.DAY
-                        ? < CalendarDays info={this.props.info} dispatcher={this.props.dispatcher} />
+                        ? < CalendarDays
+                            displayDate={this.props.info.displayDate}
+                            selectedDate={this.props.info.selectedDateByUser}
+                            monthDesc={this.props.info.monthDesc}
+                            dispatcher={this.props.dispatcher}
+                        />
                         : (view === VIEW.MONTH_LIST
                             ? < CalendarMonthSelect info={this.props.info} dispatcher={this.props.dispatcher} />
                             : < CalendarYearSelect info={this.props.info} dispatcher={this.props.dispatcher} />)

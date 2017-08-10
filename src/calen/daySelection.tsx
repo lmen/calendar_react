@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as Mon from 'moment';
-import { CalendarState } from './redux/state';
 import { MonthDays } from './redux/utils';
 import { CalendarDDToolbar } from './toolbar';
 import { CalendarDispatcher } from './redux/dispatcher';
-import { WEAK_DAYS } from './redux/locale';
+// import { WEAK_DAYS } from './redux/locale';
 
 interface Props {
     day: number;
@@ -63,7 +62,9 @@ export class CalendarDropDownDay extends React.PureComponent<Props> {
 // =============================
 
 interface PropsDays {
-    info: CalendarState;
+    displayDate: Mon.Moment;
+    selectedDate: Mon.Moment;
+    monthDesc: string[];
     dispatcher: CalendarDispatcher;
 }
 
@@ -83,16 +84,16 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
     }
 
     render() {
-        console.log('render DaySelectionView %s ', this.props.info.displayDate);
+        console.log('render DaySelectionView %s ', this.props.displayDate);
 
-        const displayDate = this.props.info.displayDate;
-        const dayToSelect = this.calculateSelDay(displayDate, this.props.info.selectedDateByUser);
+        const displayDate = this.props.displayDate;
+        // const dayToSelect = this.calculateSelDay(displayDate, this.props.selectedDate);
         let monthDays = new MonthDays();
         monthDays.fillMonthDays(displayDate);
         return (
             <div className="cdrop">
                 <CalendarDDToolbar
-                    monthDesc={this.props.info.monthDesc}
+                    monthDesc={this.props.monthDesc}
                     showBtns={true}
                     displayDate={displayDate}
                     onNext={this.handleGoNextMonth}
@@ -100,6 +101,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
                     onMonth={this.handleGoMonthsList}
                     onYear={this.handleGoYearsList}
                 />
+                { /*
                 <table className="daytable">
                     <thead>
                         <tr>
@@ -122,6 +124,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
                         }
                     </tbody>
                 </table>
+                */ }
             </div>
         );
 
@@ -136,6 +139,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
     }
 
     handleGoNextMonth() {
+        console.log('User click goto Next month');
         this.dispatcher.dayViewGotoNextMonth();
     }
 
@@ -146,22 +150,22 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
     handleGoYearsList() {
         this.dispatcher.showYearsListView();
     }
+    /*
+        private calculateSelDay(displayDate: Mon.Moment, selectedDateByUser: Mon.Moment) {
+            if (!selectedDateByUser) {
+                return -1;
+            }
 
-    private calculateSelDay(displayDate: Mon.Moment, selectedDateByUser: Mon.Moment) {
-        if (!selectedDateByUser) {
-            return -1;
+            let selDay = -1, selyear = -1, selmonth = -1;
+            selyear = selectedDateByUser.year();
+            selmonth = selectedDateByUser.month();
+
+            if (!(selmonth === displayDate.month() && selyear === displayDate.year())) {
+                return -1;
+            }
+            selDay = selectedDateByUser.date();
+
+            return selDay;
         }
-
-        let selDay = -1, selyear = -1, selmonth = -1;
-        selyear = selectedDateByUser.year();
-        selmonth = selectedDateByUser.month();
-
-        if (!(selmonth === displayDate.month() && selyear === displayDate.year())) {
-            return -1;
-        }
-        selDay = selectedDateByUser.date();
-
-        return selDay;
-    }
-
+    */
 }

@@ -5,6 +5,18 @@ export interface CalendarStateSubscriber {
     handleCalendarStateChange(newState: CalendarState): void;
 }
 
+function ss(oldState: CalendarState, selectedDate: Mom.Moment): CalendarState {
+
+    selectedDate = selectedDate || Mom.now();
+
+    oldState.currentView = VIEW.DAY;
+    oldState.displayDate = selectedDate.clone().date(1);
+
+    oldState.lastSelectedDate = selectedDate;
+    oldState.selectedDateByUser = selectedDate;
+
+}
+
 export class CalendarDispatcher {
     constructor(
         public subscriber: CalendarStateSubscriber,
@@ -21,9 +33,7 @@ export class CalendarDispatcher {
         this.state.lastSelectedDate = selectedDate;
         this.state.selectedDateByUser = selectedDate;
 
-        this.state.yearsViewPort.showYear(selectedDate.year());
-
-        // Is to be called on a component constructor, don't inform the subscriber
+        // Is to be called on a component constructor, don't need inform the subscriber
     }
 
     yearViewPortMoveUp() {
@@ -41,7 +51,6 @@ export class CalendarDispatcher {
     yearViewSelected(newYear: number) {
         const newDisplayDate = this.state.displayDate.clone().year(newYear);
         if (!newDisplayDate.isValid()) {
-            // tslint:disable-next-line:no-console
             console.log('invalid date: %s', newYear);
             return;
         }
@@ -117,6 +126,7 @@ export class CalendarDispatcher {
     }
 
     public sendToSubscribers() {
-        this.subscriber.handleCalendarStateChange(this.state);
+        let clone = Object.assign({}, this.state);
+        this.subscriber.handleCalendarStateChange(clone);
     }
 }
