@@ -1,4 +1,5 @@
 import { CalendarState, VIEW } from './state';
+import { ViewPort } from "./utils";
 
 export interface Action {
     reduce(state: CalendarState): CalendarState;
@@ -125,8 +126,11 @@ export class ShowYearsListView implements Action {
     public reduce(state: CalendarState): CalendarState {
 
         let currentView = VIEW.YEAR_LIST;
-        state.yearsViewPort.showYear(state.displayDate.year()); // TODO 
 
-        return { ...state, currentView };
+        let vp = new ViewPort(state.yearStartLine);
+        vp.showYear(state.displayDate.year()); // TODO 
+        let yearStartLine = vp.getStartLine();
+
+        return { ...state, currentView, yearStartLine };
     }
 }

@@ -91,9 +91,15 @@ export function yearsMatrix(matrixColSize: number): number[][] {
     return rows;
 }
 
-export class ViewPort {
+const YEAR_VIRE_PORT_LINE = 6;
+const YEAR_COL_SIZE = 6;
+const YEARS_MATRIX = yearsMatrix(YEAR_COL_SIZE);
 
-    constructor(private years: number[][], private maxLines: number, private startLine: number = 0) {
+export class ViewPort {
+    private years: number[][] = YEARS_MATRIX;
+    private maxLines: number = YEAR_VIRE_PORT_LINE;
+
+    constructor(private startLine: number = 0) {
     }
 
     showYear(yearToShow: number): void {
@@ -116,6 +122,10 @@ export class ViewPort {
     public content(): number[][] {
         const endLine = Math.min(this.years.length - 1, this.startLine + this.maxLines - 1);
         return this.years.slice(this.startLine, endLine + 1);
+    }
+
+    getStartLine() {
+        return this.startLine;
     }
 
 }
