@@ -1,5 +1,5 @@
 import { CalendarState, VIEW } from './state';
-import { ViewPort } from "./utils";
+import { ViewPort } from './utils';
 
 export interface Action {
     reduce(state: CalendarState): CalendarState;
@@ -27,17 +27,24 @@ export class DayViewGotoNextMonth implements Action {
 export class YearViewPortMoveUp implements Action {
 
     public reduce(state: CalendarState): CalendarState {
-        state.yearsViewPort.moveup();
-        // TODO REVER
-        return state;
+        let vp = new ViewPort(state.yearStartLine);
+        vp.moveup();
+
+        let yearStartLine = vp.getStartLine();
+
+        return { ...state, yearStartLine };
     }
 }
 
 export class YearViewPortMoveDown implements Action {
 
     public reduce(state: CalendarState): CalendarState {
-        state.yearsViewPort.moveDown();
-        return state;
+        let vp = new ViewPort(state.yearStartLine);
+        vp.moveDown();
+
+        let yearStartLine = vp.getStartLine();
+
+        return { ...state, yearStartLine };
     }
 }
 
@@ -128,7 +135,7 @@ export class ShowYearsListView implements Action {
         let currentView = VIEW.YEAR_LIST;
 
         let vp = new ViewPort(state.yearStartLine);
-        vp.showYear(state.displayDate.year()); // TODO 
+        vp.showYear(state.displayDate.year()); // TODO
         let yearStartLine = vp.getStartLine();
 
         return { ...state, currentView, yearStartLine };

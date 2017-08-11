@@ -64,6 +64,8 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
     }
 
     handleCalendarStateChange(newState: CalendarState): void {
+        let beforeDate = this.dispatcher.getCurrentState().selectedDateByUser;
+
         this.setState(
             (prevState, props) => {
                 console.log(
@@ -75,9 +77,19 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
                 return newState;
             },
             () => {
-                // this.props.onDateChange(this.state.selectedDateByUser);
+                let newDate = newState.selectedDateByUser;
+                if (diff(beforeDate, newDate)) {
+                    this.props.onDateChange(newDate);
+                }
             }
         );
     }
 
+}
+
+function diff(a: Mon.Moment, b: Mon.Moment): boolean {
+    if (a != null) {
+        return a.isSame(b);
+    }
+    return b != null;
 }

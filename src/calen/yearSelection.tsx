@@ -6,6 +6,7 @@ import {
     YearViewPortMoveDown, YearViewPortMoveUp,
     YearViewSelected, ShowDaysView, ShowMonthsListView
 } from './redux/actions';
+import { ViewPort } from './redux/utils';
 
 interface Props {
     year: number;
@@ -62,8 +63,8 @@ export class CalendarYearSelect extends React.PureComponent<CYearSelectProps> {
 
     render() {
         console.log('render CalendarYearSelect');
-
-        const yearsMat = this.props.info.yearsViewPort.content();
+        let vp = new ViewPort(this.dispatcher.getCurrentState().yearStartLine);
+        let yearsMat = vp.content();
         return (
             <div className="cdrop">
                 <CalendarDDToolbar
