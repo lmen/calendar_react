@@ -4,6 +4,7 @@ import * as Mon from 'moment';
 import { CalendarDropDown } from './dropDown';
 import { CalendarState } from './redux/state';
 import { CalendarStateSubscriber, Store, } from './redux/dispatcher';
+import { DataChanged } from './redux/actions';
 
 interface CProps {
     date: Mon.Moment;
@@ -29,7 +30,13 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
             'Calender componentDidMount initial state: sel: %s display: %s',
             this.state.selectedDateByUser,
             this.state.displayDate);
+    }
 
+    componentWillReceiveProps(nextProps: CProps) {
+        if (this.props.date && !this.props.date.isSame(nextProps.date)) {
+            console.log('Calendar componentWillReceiveProps ' + nextProps.date);
+            this.dispatcher.apply(new DataChanged(nextProps.date));
+        }
     }
 
     shouldComponentUpdate(nextProps: CProps, nextState: CalendarState, nextContext: {}): boolean {
@@ -39,7 +46,11 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
             this.state.selectedDateByUser === nextState.selectedDateByUser
         );
         console.log(
-            'Calender shouldComponentUpdate:=%s %s==%s display: %s==%s', res,
+            'Calender shouldComponentUpdate:=%s ' +
+            ' props: %s == %s ' +
+            'selectDate: %s==%s display: %s==%s',
+            res,
+            this.props.date, nextProps.date,
             this.state.selectedDateByUser, nextState.selectedDateByUser,
             this.state.displayDate, nextState.displayDate);
 

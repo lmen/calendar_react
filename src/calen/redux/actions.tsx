@@ -1,5 +1,6 @@
 import { CalendarState, VIEW } from './state';
 import { ViewPort } from './utils';
+import * as Mom from 'moment';
 
 export interface Action {
     reduce(state: CalendarState): CalendarState;
@@ -139,5 +140,18 @@ export class ShowYearsListView implements Action {
         let yearStartLine = vp.getStartLine();
 
         return { ...state, currentView, yearStartLine };
+    }
+}
+
+export class DataChanged implements Action {
+
+    constructor(private date: Mom.Moment) { }
+
+    public reduce(state: CalendarState): CalendarState {
+
+        let selectedDateByUser = this.date.clone();
+        let displayDate = this.date.clone().date(1);
+
+        return { ...state, selectedDateByUser, displayDate };
     }
 }

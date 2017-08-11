@@ -12,6 +12,7 @@ export class Form extends React.Component<{}, {
             transferDate: Mom()
         };
         this.handleDateChange = this.handleDateChange.bind(this);
+        this.handlePlusYear = this.handlePlusYear.bind(this);
     }
 
     render() {
@@ -19,12 +20,21 @@ export class Form extends React.Component<{}, {
         return (
             <div>
                 <div> TransfereDate: {date} </div>
+                <button onClick={this.handlePlusYear}>Plus one year</button>
                 <Calendar
                     date={this.state.transferDate}
                     onDateChange={this.handleDateChange}
                 />
             </div>
         );
+    }
+
+    handlePlusYear() {
+        this.setState((prevState) => {
+            let transferDate = prevState.transferDate.clone();
+            transferDate.add(1, 'year');
+            return { transferDate };
+        });
     }
 
     handleDateChange(newDate: Mom.Moment) {
