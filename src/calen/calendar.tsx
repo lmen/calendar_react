@@ -1,10 +1,9 @@
 import * as React from 'react';
-import './calendar.css';
 import * as Mon from 'moment';
 import { CalendarDropDown } from './dropDown';
 import { CalendarState } from './redux/state';
 import { CalendarStateSubscriber, Store, } from './redux/dispatcher';
-import { DataChanged } from './redux/actions';
+import { DataChanged, OpenDropDown } from './redux/actions';
 
 interface CProps {
     date: Mon.Moment;
@@ -24,6 +23,7 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
 
         this.state = this.dispatcher.getCurrentState();
 
+        this.handleClick = this.handleClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
 
         console.log(
@@ -38,40 +38,49 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
             this.dispatcher.apply(new DataChanged(nextProps.date));
         }
     }
-
-    shouldComponentUpdate(nextProps: CProps, nextState: CalendarState, nextContext: {}): boolean {
-        let res = !(this.props.date === nextProps.date &&
-            this.state.currentView === nextState.currentView &&
-            this.state.displayDate === nextState.displayDate &&
-            this.state.selectedDateByUser === nextState.selectedDateByUser
-        );
-        console.log(
-            'Calender shouldComponentUpdate:=%s ' +
-            ' props: %s == %s ' +
-            'selectDate: %s==%s display: %s==%s',
-            res,
-            this.props.date, nextProps.date,
-            this.state.selectedDateByUser, nextState.selectedDateByUser,
-            this.state.displayDate, nextState.displayDate);
-
-        return res;
-    }
+    /*
+        shouldComponentUpdate(nextProps: CProps, nextState: CalendarState, nextContext: {}): boolean {
+            let res = !(this.props.date === nextProps.date &&
+                this.state.currentView === nextState.currentView &&
+                this.state.displayDate === nextState.displayDate &&
+                this.state.selectedDateByUser === nextState.selectedDateByUser 
+    
+            );
+            console.log(
+                'Calender shouldComponentUpdate:=%s ' +
+                ' props: %s == %s ' +
+                'selectDate: %s==%s display: %s==%s',
+                res,
+                this.props.date, nextProps.date,
+                this.state.selectedDateByUser, nextState.selectedDateByUser,
+                this.state.displayDate, nextState.displayDate);
+    
+            return res;
+        }
+        */
 
     render() {
         console.log('Calendar render state:%s props: %s', Object.keys(this.state), Object.keys(this.props));
         return (
-            <div>
+            <div className="lmen-calendar">
                 <input
                     value={this.state.selectedDateByUser.format()}
+                    onClick={this.handleClick}
                     onChange={this.handleChange}
                 />
-                <CalendarDropDown info={this.state} dispatcher={this.dispatcher} />
+                {this.state.open ? <CalendarDropDown info={this.state} dispatcher={this.dispatcher} /> : false}
             </div>
         );
     }
 
+    handleClick() {
+        console.log('calendar click');
+
+        this.dispatcher.apply(new OpenDropDown());
+    }
+
     handleChange() {
-        console.log('handle change from input: %s', this.state.selectedDateByUser);
+        console.log('calendar click');
     }
 
     handleCalendarStateChange(newState: CalendarState): void {

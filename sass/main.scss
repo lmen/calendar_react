@@ -1,6 +1,82 @@
-.sdd {
-    .sa {
-        background: red;
-        border: 1px solid;
+$dropDown-width: 270px;
+.lmen-calendar {
+    input {
+        width: 100px;
+    }
+    .dropDown {
+        width: $dropDown-width;
+        box-shadow: 10px 10px 5px #888888;
+        padding: 5px;
+        border: 1px solid black;
+        &.hide {
+            display: none;
+        }
+        &.show {
+            display: block;
+        }
+        .currentSelectedDate {
+            color: red;
+            border-bottom: 1px dashed black;
+        }
+        .viewZone {
+            margin-top: 5px;
+            .view {
+                .toolbar {
+                    width: 100%;
+                    .one {
+                        float: left;
+                    }
+                    .buttons {
+                        float: right;
+                        cursor: pointer;
+                    }
+                }
+                .daysView {
+                    table {
+                        clear: both;
+                        border-collapse: collapse;
+                        /* border: 1px solid black; */
+                    }
+                    td {
+                        //padding: 5px;
+                        text-align: center;
+                        /* border: 1px solid black; */
+                        &.day-inactive {
+                            color: lightslategrey;
+                        }
+                        &.header {
+                            font-weight: bold;
+                            text-transform: uppercase;
+                        }
+                        &.day-selected {
+                            color: red;
+                        }
+                    }
+                }
+            }
+            .monthsView {
+                .monthSelected {
+                    color: red;
+                }
+            }
+            .yearsView {
+                .yearSelected {
+                    color: red;
+                }
+            }
+        }
+        .btnsToolbar {
+            margin: 5px;
+            button {
+                background-color: #a4d6ed;
+                border-radius: 4px;
+                border: 0;
+                margin: 5px;
+                color: darkblue;
+                padding-bottom: 3px;
+                padding-top: 3px;
+                width: 70px;
+            }
+        }
     }
 }

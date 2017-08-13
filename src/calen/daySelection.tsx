@@ -96,7 +96,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
         let monthDays = new MonthDays();
         monthDays.fillMonthDays(displayDate);
         return (
-            <div className="cdrop">
+            <div className="view">
                 <CalendarDDToolbar
                     monthDesc={this.props.monthDesc}
                     showBtns={true}
@@ -106,7 +106,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
                     onMonth={this.handleGoMonthsList}
                     onYear={this.handleGoYearsList}
                 />
-                <table className="daytable">
+                <table className="daysView">
                     <thead>
                         <tr>
                             {WEAK_DAYS.map((day, index) => (<td className="header" key={index}> {day} </td>))}

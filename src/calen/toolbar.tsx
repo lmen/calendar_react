@@ -25,7 +25,7 @@ export class CalendarDDToolbar extends React.Component<{
         const displayedMonthDesc = this.props.monthDesc[this.props.displayDate.month()];
         const displayedComp = this.props.displayDate.year();
         return (
-            <div className="zone">
+            <div className="toolbar">
                 <div className="one">
                     <span className="curMonth" onClick={this.props.onMonth} > {displayedMonthDesc} </span>
                     <span className="curYear" onClick={this.props.onYear}> {displayedComp}</span>

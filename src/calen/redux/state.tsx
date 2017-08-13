@@ -4,6 +4,7 @@ export enum VIEW { DAY, MONTH_LIST, YEAR_LIST }
 
 export class CalendarState {
 
+    open: boolean;
     currentView: VIEW;
     displayDate: Mom.Moment;
     lastSelectedDate: Mom.Moment;

@@ -55,7 +55,7 @@ export class CalendarMonthSelect extends React.PureComponent<CMonthSelectProps> 
 
         const monthMatrix = listToMatrix(this.props.info.monthDesc, 4);
         return (
-            <div className="cdrop">
+            <div className="view">
 
                 <CalendarDDToolbar
                     monthDesc={this.props.info.monthDesc}
@@ -65,7 +65,7 @@ export class CalendarMonthSelect extends React.PureComponent<CMonthSelectProps> 
                     onYear={this.handleGoYearsList}
                 />
 
-                <table className="monthtable">
+                <table className="monthsView">
                     <tbody>
                         {monthMatrix.map((row, index) =>
                             <tr key={index}>

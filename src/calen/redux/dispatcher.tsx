@@ -28,6 +28,7 @@ export class Store {
 
         oldState.lastSelectedDate = selectedDate;
         oldState.selectedDateByUser = selectedDate;
+        oldState.open = false;
 
         return oldState;
     }

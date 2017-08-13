@@ -66,7 +66,7 @@ export class CalendarYearSelect extends React.PureComponent<CYearSelectProps> {
         let vp = new ViewPort(this.dispatcher.getCurrentState().yearStartLine);
         let yearsMat = vp.content();
         return (
-            <div className="cdrop">
+            <div className="view">
                 <CalendarDDToolbar
                     monthDesc={this.props.info.monthDesc}
                     showBtns={true}
@@ -76,7 +76,7 @@ export class CalendarYearSelect extends React.PureComponent<CYearSelectProps> {
                     onBack={this.handleGoDaysList}
                     onMonth={this.handleGoMonthsList}
                 />
-                <table className="yeartable">
+                <table className="yearsView">
 
                     <tbody>
                         {yearsMat.map((row, index) =>

@@ -155,3 +155,23 @@ export class DataChanged implements Action {
         return { ...state, selectedDateByUser, displayDate };
     }
 }
+
+export class OpenDropDown implements Action {
+
+    public reduce(state: CalendarState): CalendarState {
+
+        let open = true;
+
+        return { ...state, open };
+    }
+}
+
+export class CloseDropDown implements Action {
+
+    public reduce(state: CalendarState): CalendarState {
+
+        let open = false;
+
+        return { ...state, open };
+    }
+}
