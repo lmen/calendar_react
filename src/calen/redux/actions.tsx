@@ -149,10 +149,11 @@ export class DataChanged implements Action {
 
     public reduce(state: CalendarState): CalendarState {
 
+        let currentDate = this.date.clone();
         let selectedDateByUser = this.date.clone();
         let displayDate = this.date.clone().date(1);
 
-        return { ...state, selectedDateByUser, displayDate };
+        return { ...state, selectedDateByUser, displayDate, currentDate };
     }
 }
 
@@ -161,12 +162,25 @@ export class OpenDropDown implements Action {
     public reduce(state: CalendarState): CalendarState {
 
         let open = true;
+        let userEndSelection = false;
 
-        return { ...state, open };
+        return { ...state, open, userEndSelection };
     }
 }
 
-export class CloseDropDown implements Action {
+export class CloseDropDownUserAcceptSelection implements Action {
+
+    public reduce(state: CalendarState): CalendarState {
+
+        let open = false;
+        let userEndSelection = true;
+        let currentDate = state.selectedDateByUser;
+
+        return { ...state, open, userEndSelection, currentDate };
+    }
+}
+
+export class CloseDropDownUserReectSelection implements Action {
 
     public reduce(state: CalendarState): CalendarState {
 

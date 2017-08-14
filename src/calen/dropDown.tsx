@@ -4,7 +4,7 @@ import { CalendarDays } from './daySelection';
 import { CalendarMonthSelect } from './monthSelection';
 import { CalendarYearSelect } from './yearSelection';
 import { Store } from './redux/dispatcher';
-import { CloseDropDown } from './redux/actions';
+import { CloseDropDownUserAcceptSelection, CloseDropDownUserReectSelection } from './redux/actions';
 
 interface CDDownProps {
     info: CalendarState;
@@ -50,11 +50,11 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
     }
 
     handleOk() {
-        this.props.dispatcher.apply(new CloseDropDown());
+        this.props.dispatcher.apply(new CloseDropDownUserAcceptSelection());
     }
 
     handleCancel() {
-        this.props.dispatcher.apply(new CloseDropDown());
+        this.props.dispatcher.apply(new CloseDropDownUserReectSelection());
     }
 
 }

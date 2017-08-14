@@ -68,7 +68,7 @@ export class CalendarDropDownDay extends React.PureComponent<Props> {
 
 interface PropsDays {
     displayDate: Mon.Moment;
-    selectedDate: Mon.Moment;
+    selectedDate: Mon.Moment | null;
     monthDesc: string[];
     dispatcher: Store;
 }
@@ -154,7 +154,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
         this.dispatcher.apply(new ShowYearsListView());
     }
 
-    private calculateSelDay(displayDate: Mon.Moment, selectedDateByUser: Mon.Moment) {
+    private calculateSelDay(displayDate: Mon.Moment, selectedDateByUser: Mon.Moment | null) {
         if (!selectedDateByUser) {
             return -1;
         }

@@ -7,7 +7,7 @@ import { DataChanged, OpenDropDown } from './redux/actions';
 
 interface CProps {
     date: Mon.Moment;
-    onDateChange: (newDate: Mon.Moment) => void;
+    onDateChange: (newDate: Mon.Moment | null) => void;
 }
 
 export class Calendar extends React.PureComponent<CProps, CalendarState> implements CalendarStateSubscriber {
@@ -61,10 +61,12 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
 
     render() {
         console.log('Calendar render state:%s props: %s', Object.keys(this.state), Object.keys(this.props));
+        const currentDate = this.state.currentDate;
+        const currentDateStr = currentDate ? currentDate.format() : '';
         return (
             <div className="lmen-calendar">
                 <input
-                    value={this.state.selectedDateByUser.format()}
+                    value={currentDateStr}
                     onClick={this.handleClick}
                     onChange={this.handleChange}
                 />
@@ -92,13 +94,16 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
                     'handle dispatcher change: ' +
                     'newState.selDate: %s newState.displayDate: %s' +
                     'prevState.selDate: %s prevState.displayDate: %s',
+                    'userEndSelection: %s ',
                     newState.selectedDateByUser, newState.displayDate,
-                    prevState.selectedDateByUser, prevState.displayDate);
+                    prevState.selectedDateByUser, prevState.displayDate,
+                    newState.userEndSelection);
                 return newState;
             },
             () => {
                 let newDate = newState.selectedDateByUser;
-                if (diff(beforeDate, newDate)) {
+                if (newState.userEndSelection && diff(beforeDate, newDate)) {
+
                     this.props.onDateChange(newDate);
                 }
             }
@@ -107,9 +112,9 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
 
 }
 
-function diff(a: Mon.Moment, b: Mon.Moment): boolean {
-    if (a != null) {
+function diff(a: Mon.Moment | null, b: Mon.Moment | null): boolean {
+    if (a != null && b != null) {
         return a.isSame(b);
     }
-    return b != null;
+    return b !== a;
 }

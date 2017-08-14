@@ -18,17 +18,18 @@ export class Store {
         this.currentState = this.getInitialState(selectedDate);
     }
 
-    protected getInitialState(selectedDate: Mom.Moment): CalendarState {
+    protected getInitialState(currentDate: Mom.Moment): CalendarState {
 
         let oldState = new CalendarState(WEAK_DAYS, MONTH_DESC);
-        selectedDate = selectedDate || Mom.now();
 
-        oldState.currentView = VIEW.DAY;
-        oldState.displayDate = selectedDate.clone().date(1);
-
-        oldState.lastSelectedDate = selectedDate;
-        oldState.selectedDateByUser = selectedDate;
         oldState.open = false;
+        oldState.currentView = VIEW.DAY;
+        oldState.userEndSelection = false;
+
+        oldState.currentDate = currentDate ? currentDate.clone() : null;
+        let date = currentDate || Mom.now();
+        oldState.displayDate = date.clone().date(1);
+        oldState.selectedDateByUser = date;
 
         return oldState;
     }

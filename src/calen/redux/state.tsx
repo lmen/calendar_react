@@ -5,16 +5,16 @@ export enum VIEW { DAY, MONTH_LIST, YEAR_LIST }
 export class CalendarState {
 
     open: boolean;
+    userEndSelection: boolean;
     currentView: VIEW;
+    currentDate: Mom.Moment | null;
     displayDate: Mom.Moment;
-    lastSelectedDate: Mom.Moment;
-    selectedDateByUser: Mom.Moment;
+    selectedDateByUser: Mom.Moment | null;
+    yearStartLine: number;
 
     // locale
     weakDays: string[];
     monthDesc: string[];
-
-    yearStartLine: number;
 
     constructor(
         weakDaysTo: string[], monthDescTo: string[]) {
