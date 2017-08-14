@@ -1,4 +1,4 @@
-$dropDown-width: 270px;
+$dropDown-width: 255px;
 .lmen-calendar {
     input {
         width: 100px;
@@ -31,16 +31,13 @@ $dropDown-width: 270px;
                         cursor: pointer;
                     }
                 }
-                .daysView {
-                    table {
-                        clear: both;
-                        border-collapse: collapse;
-                        /* border: 1px solid black; */
-                    }
+                table.daysView {
+                    clear: both;
+                    border-collapse: collapse;
+                    font-size: 15px;
+                    margin: 4px auto 4px auto;
                     td {
-                        //padding: 5px;
                         text-align: center;
-                        /* border: 1px solid black; */
                         &.day-inactive {
                             color: lightslategrey;
                         }
@@ -54,12 +51,26 @@ $dropDown-width: 270px;
                     }
                 }
             }
-            .monthsView {
+            table.monthsView {
+                clear: both;
+                border-collapse: collapse;
+                font-size: 15px;
+                margin: 4px auto 4px auto;
+                td {
+                    padding: 4px;
+                    text-align: center;
+                }
                 .monthSelected {
                     color: red;
                 }
             }
-            .yearsView {
+            table.yearsView {
+                clear: both;
+                font-size: 15px;
+                margin: 4px auto 4px auto;
+                td {
+                    padding: 4px;
+                }
                 .yearSelected {
                     color: red;
                 }
