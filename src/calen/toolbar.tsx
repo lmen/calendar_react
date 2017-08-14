@@ -15,8 +15,8 @@ export class CalendarDDToolbar extends React.Component<{
     renderBtns() {
         return (
             <div className="buttons">
-                <span className="nextMonth" onClick={this.props.onPrev}> &lt; </span>
-                <span className="prevMonth" onClick={this.props.onNext}> &gt; </span>
+                <span className="fa fa-chevron-up next inline-link" onClick={this.props.onPrev} />
+                <span className="fa fa-chevron-down prev inline-link" onClick={this.props.onNext} />
             </div>
         );
     }
@@ -27,11 +27,17 @@ export class CalendarDDToolbar extends React.Component<{
         return (
             <div className="toolbar">
                 <div className="one">
-                    <span className="curMonth" onClick={this.props.onMonth} > {displayedMonthDesc} </span>
-                    <span className="curYear" onClick={this.props.onYear}> {displayedComp}</span>
+                    <span className="curMonth inline-link" onClick={this.props.onMonth} > {displayedMonthDesc} </span>
+                    <span className="curYear inline-link" onClick={this.props.onYear}> {displayedComp}</span>
                 </div>
 
-                {this.props.onBack ? <span className="back" onClick={this.props.onBack}> * </span> : false}
+                {this.props.onBack ?
+                    <span
+                        className="fa fa-level-up back inline-link"
+                        onClick={this.props.onBack}
+                        title="Back to day selection"
+                    /> : false}
+
                 {this.props.showBtns ? this.renderBtns() : false}
 
             </div>);
