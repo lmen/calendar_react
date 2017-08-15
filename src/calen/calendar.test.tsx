@@ -5,6 +5,9 @@ import {
     MonthDays, listToMatrix, yearsMatrix, findRowOfyear
 } from './redux/utils';
 
+import 'moment/locale/pt';
+import 'moment/locale/fr';
+
 it('renders the correct text when no enthusiasm level is given', () => {
     let a = { year: 2017, month: 7 - 1, day: 1 };
     let first = Mom(a); // '01-07-2017', 'DD-MM-YYYY');
@@ -66,5 +69,27 @@ it('years', () => {
     expect(vpMoveDown(yearsMat, 30)).toBe(29);
 
     expect(vpEndLine(yearsMat, 0, 6)).toBe(5);*/
+
+});
+
+it('localization', () => {
+
+    var mo = Mom.localeData('pt');
+    expect(mo.months()[3]).toBe('Abril');
+    expect(mo.monthsShort()[3]).toBe('Abr');
+    expect(mo.weekdays()[3]).toBe('Quarta-Feira');
+    expect(mo.weekdaysShort()[3]).toBe('Qua');
+    expect(mo.weekdaysMin()[3]).toBe('4ª');
+    expect(mo.firstDayOfWeek()).toBe(1);
+    expect(mo.weekdays()[mo.firstDayOfWeek()]).toBe('Segunda-Feira');
+
+    var mofr = Mom.localeData('fr');
+    expect(mofr.months()[3]).toBe('avril');
+    expect(mofr.monthsShort()[3]).toBe('avr.');
+    expect(mofr.weekdays()[3]).toBe('mercredi');
+    expect(mofr.weekdaysShort()[3]).toBe('mer.');
+    expect(mofr.weekdaysMin()[3]).toBe('Me');
+    expect(mofr.firstDayOfWeek()).toBe(1);
+    expect(mofr.weekdays()[mo.firstDayOfWeek()]).toBe('lundi');
 
 });

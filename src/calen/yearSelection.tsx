@@ -68,7 +68,7 @@ export class CalendarYearSelect extends React.PureComponent<CYearSelectProps> {
         return (
             <div className="view">
                 <CalendarDDToolbar
-                    monthDesc={this.props.info.monthDesc}
+                    localeCode={this.props.info.config.locale_code}
                     showBtns={true}
                     displayDate={this.props.info.displayDate}
                     onNext={this.handleScrollDown}

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as Mom from 'moment';
+import { localeListOfMonths } from './redux/utils';
 
 export class CalendarDDToolbar extends React.Component<{
     showBtns: boolean;
-    monthDesc: string[];
+    localeCode: string;
     displayDate: Mom.Moment;
     onPrev?: () => void;
     onNext?: () => void;
@@ -22,20 +23,20 @@ export class CalendarDDToolbar extends React.Component<{
     }
 
     render() {
-        const displayedMonthDesc = this.props.monthDesc[this.props.displayDate.month()];
-        const displayedComp = this.props.displayDate.year();
+        const displayedMonthDesc = localeListOfMonths(this.props.localeCode)[this.props.displayDate.month()];
+        const displayedYear = this.props.displayDate.year();
         return (
             <div className="toolbar">
                 <div className="one">
                     <span className="curMonth inline-link" onClick={this.props.onMonth} > {displayedMonthDesc} </span>
-                    <span className="curYear inline-link" onClick={this.props.onYear}> {displayedComp}</span>
+                    <span className="curYear inline-link" onClick={this.props.onYear}> {displayedYear}</span>
                 </div>
 
                 {this.props.onBack ?
                     <span
-                        className="fa fa-level-up back inline-link"
+                        className="fa fa-calendar back inline-link"
                         onClick={this.props.onBack}
-                        title="Back to day selection"
+                        title="Goto day selection"
                     /> : false}
 
                 {this.props.showBtns ? this.renderBtns() : false}

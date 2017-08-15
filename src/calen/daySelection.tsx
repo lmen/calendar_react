@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as Mon from 'moment';
-import { MonthDays } from './redux/utils';
+import { MonthDays, localeListOfWeekDaysShort } from './redux/utils';
 import { CalendarDDToolbar } from './toolbar';
 import { Store } from './redux/dispatcher';
 import {
@@ -8,7 +8,6 @@ import {
     DayViewGotoNextMonth, ShowMonthsListView, ShowYearsListView
 }
     from './redux/actions';
-import { WEAK_DAYS } from './redux/locale';
 
 interface Props {
     day: number;
@@ -17,7 +16,7 @@ interface Props {
     onSelectedDay?: (day: number) => void | undefined;
 }
 
-export class CalendarDropDownDay extends React.PureComponent<Props> {
+export class Day extends React.PureComponent<Props> {
 
     constructor(props: Props) {
         super(props);
@@ -69,7 +68,7 @@ export class CalendarDropDownDay extends React.PureComponent<Props> {
 interface PropsDays {
     displayDate: Mon.Moment;
     selectedDate: Mon.Moment | null;
-    monthDesc: string[];
+    localeCode: string;
     dispatcher: Store;
 }
 
@@ -90,15 +89,15 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
 
     render() {
         console.log('render DaySelectionView %s ', this.props.displayDate);
-
         const displayDate = this.props.displayDate;
         const dayToSelect = this.calculateSelDay(displayDate, this.props.selectedDate);
+        const weekDaysAbr = localeListOfWeekDaysShort(this.props.localeCode);
         let monthDays = new MonthDays();
         monthDays.fillMonthDays(displayDate);
         return (
             <div className="view">
                 <CalendarDDToolbar
-                    monthDesc={this.props.monthDesc}
+                    localeCode={this.props.localeCode}
                     showBtns={true}
                     displayDate={displayDate}
                     onNext={this.handleGoNextMonth}
@@ -109,14 +108,14 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
                 <table className="daysView">
                     <thead>
                         <tr>
-                            {WEAK_DAYS.map((day, index) => (<td className="header" key={index}> {day} </td>))}
+                            {weekDaysAbr.map((day, index) => (<td className="header" key={index}> {day} </td>))}
                         </tr>
                     </thead>
                     <tbody>
                         {monthDays.getMonthDays().map((week, index) =>
                             <tr key={index}>
                                 {week.map((d, ind) =>
-                                    <CalendarDropDownDay
+                                    <Day
                                         key={ind}
                                         day={d.day}
                                         currentMonth={d.currentMonth}

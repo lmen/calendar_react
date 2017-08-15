@@ -1,6 +1,11 @@
 import * as React from 'react';
-import { Calendar } from './calen/calendar';
+import { Calendar, Config } from './calen/calendar';
 import * as Mom from 'moment';
+import 'moment/locale/pt';
+
+const CalendarConfig: Config = {
+    locale_code: 'pt'
+};
 
 export class Form extends React.Component<{}, {
     transferDate: Mom.Moment;
@@ -22,6 +27,7 @@ export class Form extends React.Component<{}, {
                 <div> TransfereDate: {date} </div>
                 <button onClick={this.handlePlusYear}>Plus one year</button>
                 <Calendar
+                    config={CalendarConfig}
                     date={this.state.transferDate}
                     onDateChange={this.handleDateChange}
                 />

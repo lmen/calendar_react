@@ -31,9 +31,9 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
                 <div className="viewZone">
                     {view === VIEW.DAY
                         ? < CalendarDays
+                            localeCode={this.props.info.config.locale_code}
                             displayDate={this.props.info.displayDate}
                             selectedDate={this.props.info.selectedDateByUser}
-                            monthDesc={this.props.info.monthDesc}
                             dispatcher={this.props.dispatcher}
                         />
                         : (view === VIEW.MONTH_LIST

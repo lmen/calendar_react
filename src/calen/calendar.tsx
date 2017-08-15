@@ -3,10 +3,15 @@ import * as Mon from 'moment';
 import { CalendarDropDown } from './dropDown';
 import { CalendarState } from './redux/state';
 import { CalendarStateSubscriber, Store, } from './redux/dispatcher';
-import { DataChanged, OpenDropDown } from './redux/actions';
+import { DataChanged, OpenDropDown, InitState } from './redux/actions';
+
+export interface Config {
+    locale_code: string;
+}
 
 interface CProps {
     date: Mon.Moment;
+    config: Config;
     onDateChange: (newDate: Mon.Moment | null) => void;
 }
 
@@ -19,7 +24,7 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
 
         let currDate = this.props.date;
 
-        this.dispatcher = new Store(currDate, this);
+        this.dispatcher = new Store(new InitState(currDate, props.config), this);
 
         this.state = this.dispatcher.getCurrentState();
 
@@ -38,26 +43,6 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
             this.dispatcher.apply(new DataChanged(nextProps.date));
         }
     }
-    /*
-        shouldComponentUpdate(nextProps: CProps, nextState: CalendarState, nextContext: {}): boolean {
-            let res = !(this.props.date === nextProps.date &&
-                this.state.currentView === nextState.currentView &&
-                this.state.displayDate === nextState.displayDate &&
-                this.state.selectedDateByUser === nextState.selectedDateByUser 
-    
-            );
-            console.log(
-                'Calender shouldComponentUpdate:=%s ' +
-                ' props: %s == %s ' +
-                'selectDate: %s==%s display: %s==%s',
-                res,
-                this.props.date, nextProps.date,
-                this.state.selectedDateByUser, nextState.selectedDateByUser,
-                this.state.displayDate, nextState.displayDate);
-    
-            return res;
-        }
-        */
 
     render() {
         console.log('Calendar render state:%s props: %s', Object.keys(this.state), Object.keys(this.props));

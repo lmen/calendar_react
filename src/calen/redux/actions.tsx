@@ -1,9 +1,37 @@
 import { CalendarState, VIEW } from './state';
 import { ViewPort } from './utils';
 import * as Mom from 'moment';
+import { Config } from '../calendar';
 
 export interface Action {
     reduce(state: CalendarState): CalendarState;
+}
+
+export interface InitialState {
+    build(): CalendarState;
+}
+
+export class InitState implements InitialState {
+
+    constructor(private currentDate: Mom.Moment, private config: Config) {
+
+    }
+
+    build(): CalendarState {
+        let oldState = new CalendarState();
+
+        oldState.config = Object.assign({}, this.config || { locale_code: 'en' });
+        oldState.open = false;
+        oldState.currentView = VIEW.DAY;
+        oldState.userEndSelection = false;
+
+        oldState.currentDate = this.currentDate ? this.currentDate.clone() : null;
+        let date = this.currentDate || Mom.now();
+        oldState.displayDate = date.clone().date(1);
+        oldState.selectedDateByUser = date;
+
+        return oldState;
+    }
 }
 
 export class DayViewGotoPrevMonth implements Action {

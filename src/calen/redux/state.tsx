@@ -1,4 +1,5 @@
 import * as Mom from 'moment';
+import { Config } from '../calendar';
 
 export enum VIEW { DAY, MONTH_LIST, YEAR_LIST }
 
@@ -12,14 +13,6 @@ export class CalendarState {
     selectedDateByUser: Mom.Moment | null;
     yearStartLine: number;
 
-    // locale
-    weakDays: string[];
-    monthDesc: string[];
-
-    constructor(
-        weakDaysTo: string[], monthDescTo: string[]) {
-        this.weakDays = weakDaysTo;
-        this.monthDesc = monthDescTo;
-    }
+    config: Config;
 
 }

@@ -91,6 +91,20 @@ export function yearsMatrix(matrixColSize: number): number[][] {
     return rows;
 }
 
+export function localeListOfMonths(localeCode: string): string[] {
+    var mo = Mom.localeData(localeCode);
+    return mo.months();
+}
+export function localeListOfMonthsShort(localeCode: string): string[] {
+    var mo = Mom.localeData(localeCode);
+    return mo.monthsShort();
+}
+
+export function localeListOfWeekDaysShort(localeCode: string): string[] {
+    var mo = Mom.localeData(localeCode);
+    return mo.weekdaysShort();
+}
+
 const YEAR_VIRE_PORT_LINE = 6;
 const YEAR_COL_SIZE = 6;
 const YEARS_MATRIX = yearsMatrix(YEAR_COL_SIZE);

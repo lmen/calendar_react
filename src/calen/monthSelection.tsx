@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CalendarDDToolbar } from './toolbar';
 import { CalendarState } from './redux/state';
-import { listToMatrix } from './redux/utils';
+import { listToMatrix, localeListOfMonthsShort } from './redux/utils';
 import { Store } from './redux/dispatcher';
 import { MonthViewSelected, ShowDaysView, ShowYearsListView } from './redux/actions';
 
@@ -52,13 +52,13 @@ export class CalendarMonthSelect extends React.PureComponent<CMonthSelectProps> 
 
     render() {
         console.log('Render MonthSelection');
-
-        const monthMatrix = listToMatrix(this.props.info.monthDesc, 4);
+        const monthDesc = localeListOfMonthsShort(this.props.info.config.locale_code);
+        const monthMatrix = listToMatrix(monthDesc, 4);
         return (
             <div className="view">
 
                 <CalendarDDToolbar
-                    monthDesc={this.props.info.monthDesc}
+                    localeCode={this.props.info.config.locale_code}
                     showBtns={false}
                     displayDate={this.props.info.displayDate}
                     onBack={this.handleGoBack}
