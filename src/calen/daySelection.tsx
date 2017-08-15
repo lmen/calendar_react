@@ -92,7 +92,7 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
         const displayDate = this.props.displayDate;
         const dayToSelect = this.calculateSelDay(displayDate, this.props.selectedDate);
         const weekDaysAbr = localeListOfWeekDaysShort(this.props.localeCode);
-        let monthDays = new MonthDays();
+        const monthDays = new MonthDays(this.props.localeCode);
         monthDays.fillMonthDays(displayDate);
         return (
             <div className="view">

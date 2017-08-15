@@ -30,6 +30,8 @@ export class InitState implements InitialState {
         oldState.displayDate = date.clone().date(1);
         oldState.selectedDateByUser = date;
 
+        // oldState.displayDate.locale(this.config.locale_code);
+
         return oldState;
     }
 }

@@ -8,7 +8,7 @@ export interface DayInfo {
 export class MonthDays {
     private data: DayInfo[][] = [];
 
-    constructor() {
+    constructor(private localeCode: string) {
         this.init();
     }
 
@@ -19,11 +19,12 @@ export class MonthDays {
     public fillMonthDays(displayDate: Mom.Moment) {
         let info = { year: displayDate.year(), month: displayDate.month(), day: 1 }; // month is zero based
         let firstDayOfDisplayMonth = Mom(info);
+        firstDayOfDisplayMonth.locale(this.localeCode);
 
-        let dayToDisplay = Mom(firstDayOfDisplayMonth);
+        let dayToDisplay = firstDayOfDisplayMonth.clone();
 
-        let firstWeekDate = firstDayOfDisplayMonth.isoWeekday() - 1;
-        if (firstWeekDate !== 0) {
+        let firstWeekDate = firstDayOfDisplayMonth.weekday();  //       
+        if (firstWeekDate > 0) {
             dayToDisplay = Mom(info).subtract(firstWeekDate, 'd');
         }
 

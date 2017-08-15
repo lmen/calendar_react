@@ -2,11 +2,11 @@
 // import * as React from 'react';
 import * as Mom from 'moment';
 import {
-    MonthDays, listToMatrix, yearsMatrix, findRowOfyear
+    listToMatrix, yearsMatrix, findRowOfyear
 } from './redux/utils';
 
-import 'moment/locale/pt';
 import 'moment/locale/fr';
+import 'moment/locale/pt';
 
 it('renders the correct text when no enthusiasm level is given', () => {
     let a = { year: 2017, month: 7 - 1, day: 1 };
@@ -22,26 +22,38 @@ it('renders the correct text when no enthusiasm level is given', () => {
     expect(monthDays).toEqual(31);
     expect(firstWeekDate).toEqual(5);
 
-    let day = Mom('01-07-2017', 'DD-MM-YYYY');
-    let a1 = new MonthDays();
-    a1.fillMonthDays(day);
-    expect(a1.getMonthDays()[0][5].day).toEqual(1);
-    expect(a1.getMonthDays()[5][0].day).toEqual(31);
+    let day = Mom('01-08-2017', 'DD-MM-YYYY');
+    let info = { year: day.year(), month: day.month(), day: 1 }; // month is zero based
+    let firstDayOfDisplayMonth = Mom(info);
+    firstDayOfDisplayMonth.locale('pt');
+    expect(firstDayOfDisplayMonth.locale()).toBe('pt');
+    expect(firstDayOfDisplayMonth.weekday()).toBe(1); // weekday is zero base 
+    expect(Mom.weekdays(true, 1)).toBe('dsds');
+    expect(firstDayOfDisplayMonth.isoWeekday()).toBe(2); // with 1 being Monday, 2 Tuesday and 7 being Sunday.
+    expect(firstDayOfDisplayMonth.format('DD-MM-YYYY')).toBe('dsds');
 
-    a1.fillMonthDays(day.add(1, 'M'));
-    expect(a1.getMonthDays()[0][1].day).toEqual(1);
-    expect(a1.getMonthDays()[4][3].day).toEqual(31);
+    // ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
 
-    a1.fillMonthDays(day.add(1, 'M'));
-    a1.fillMonthDays(day.add(1, 'M'));
-    a1.fillMonthDays(day.add(1, 'M'));
-    a1.fillMonthDays(day.add(1, 'M'));
-    a1.fillMonthDays(day.add(1, 'M')); // 1.1.2018
-    expect(a1.getMonthDays()[0][0].day).toEqual(1);
-    expect(a1.getMonthDays()[4][2].day).toEqual(31);
-    expect(a1.getMonthDays()[4][3].day).toEqual(1);
-    expect(a1.getMonthDays()[4][3].currentMonth).toBeFalsy();
-
+    /*
+        let a1 = new MonthDays('pt'); // Domingo = 0 
+        a1.fillMonthDays(day);
+        expect(a1.getMonthDays()[0][0].day).toEqual(2);
+        expect(a1.getMonthDays()[5][0].day).toEqual(31);
+    
+        a1.fillMonthDays(day.add(1, 'M'));
+        expect(a1.getMonthDays()[0][1].day).toEqual(1);
+        expect(a1.getMonthDays()[4][3].day).toEqual(31);
+    
+        a1.fillMonthDays(day.add(1, 'M'));
+        a1.fillMonthDays(day.add(1, 'M'));
+        a1.fillMonthDays(day.add(1, 'M'));
+        a1.fillMonthDays(day.add(1, 'M'));
+        a1.fillMonthDays(day.add(1, 'M')); // 1.1.2018
+        expect(a1.getMonthDays()[0][0].day).toEqual(1);
+        expect(a1.getMonthDays()[4][2].day).toEqual(31);
+        expect(a1.getMonthDays()[4][3].day).toEqual(1);
+        expect(a1.getMonthDays()[4][3].currentMonth).toBeFalsy();
+    */
 });
 
 it('listEvents', () => {
@@ -78,7 +90,7 @@ it('localization', () => {
     expect(mo.months()[3]).toBe('Abril');
     expect(mo.monthsShort()[3]).toBe('Abr');
     expect(mo.weekdays()[3]).toBe('Quarta-Feira');
-    expect(mo.weekdaysShort()[3]).toBe('Qua');
+    expect(mo.weekdaysShort()[1]).toBe('Qua'); // 0 = DOM - ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
     expect(mo.weekdaysMin()[3]).toBe('4ª');
     expect(mo.firstDayOfWeek()).toBe(1);
     expect(mo.weekdays()[mo.firstDayOfWeek()]).toBe('Segunda-Feira');
@@ -91,5 +103,13 @@ it('localization', () => {
     expect(mofr.weekdaysMin()[3]).toBe('Me');
     expect(mofr.firstDayOfWeek()).toBe(1);
     expect(mofr.weekdays()[mo.firstDayOfWeek()]).toBe('lundi');
+
+    let info = { year: 2017, month: 9 - 1, day: 1 };
+    let firstDayOfDisplayMonth = Mom(info);
+    firstDayOfDisplayMonth.locale('pt');
+    expect(firstDayOfDisplayMonth.locale()).toBe('pt'); // depends how the locate import order is done
+    expect(firstDayOfDisplayMonth.isoWeekday()).toBe(2);
+    expect(firstDayOfDisplayMonth.weekday()).toBe(1);
+    expect(mo.weekdays()[firstDayOfDisplayMonth.weekday()]).toBe('Segunda-Feira');
 
 });
