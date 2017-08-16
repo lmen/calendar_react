@@ -27,7 +27,7 @@ it('renders the correct text when no enthusiasm level is given', () => {
     let firstDayOfDisplayMonth = Mom(info);
     firstDayOfDisplayMonth.locale('pt');
     expect(firstDayOfDisplayMonth.locale()).toBe('pt');
-    expect(firstDayOfDisplayMonth.weekday()).toBe(1); // weekday is zero base 
+    expect(firstDayOfDisplayMonth.weekday()).toBe(1); // weekday is zero base
     expect(Mom.weekdays(true, 1)).toBe('dsds');
     expect(firstDayOfDisplayMonth.isoWeekday()).toBe(2); // with 1 being Monday, 2 Tuesday and 7 being Sunday.
     expect(firstDayOfDisplayMonth.format('DD-MM-YYYY')).toBe('dsds');
@@ -35,15 +35,15 @@ it('renders the correct text when no enthusiasm level is given', () => {
     // ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
 
     /*
-        let a1 = new MonthDays('pt'); // Domingo = 0 
+        let a1 = new MonthDays('pt'); // Domingo = 0
         a1.fillMonthDays(day);
         expect(a1.getMonthDays()[0][0].day).toEqual(2);
         expect(a1.getMonthDays()[5][0].day).toEqual(31);
-    
+
         a1.fillMonthDays(day.add(1, 'M'));
         expect(a1.getMonthDays()[0][1].day).toEqual(1);
         expect(a1.getMonthDays()[4][3].day).toEqual(31);
-    
+
         a1.fillMonthDays(day.add(1, 'M'));
         a1.fillMonthDays(day.add(1, 'M'));
         a1.fillMonthDays(day.add(1, 'M'));

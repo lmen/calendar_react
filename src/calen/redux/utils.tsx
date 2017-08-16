@@ -23,7 +23,7 @@ export class MonthDays {
 
         let dayToDisplay = firstDayOfDisplayMonth.clone();
 
-        let firstWeekDate = firstDayOfDisplayMonth.weekday();  //       
+        let firstWeekDate = firstDayOfDisplayMonth.weekday();  //
         if (firstWeekDate > 0) {
             dayToDisplay = Mom(info).subtract(firstWeekDate, 'd');
         }
@@ -102,8 +102,17 @@ export function localeListOfMonthsShort(localeCode: string): string[] {
 }
 
 export function localeListOfWeekDaysShort(localeCode: string): string[] {
+    function shiftToLocale(firstDayOfWeek: number, listWeekDays: string[]) {
+        let out = [];
+        for (let i = 0; i < 7; i++) {
+            out[i] = listWeekDays[(i + firstDayOfWeek) % 7];
+        }
+        return out;
+    }
     var mo = Mom.localeData(localeCode);
-    return mo.weekdaysShort();
+    // list has an array like sunday, monday, ... no matter the specified locale
+    let list = mo.weekdaysShort();
+    return shiftToLocale(mo.firstDayOfWeek(), list);
 }
 
 const YEAR_VIRE_PORT_LINE = 6;
