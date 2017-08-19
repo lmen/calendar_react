@@ -1,5 +1,6 @@
 $dropDown-width: 255px;
 .lmen-calendar {
+    position: relative;
     input {
         width: 100px;
     }
@@ -7,6 +8,7 @@ $dropDown-width: 255px;
         cursor: pointer;
     }
     .dropDown {
+        position: absolute;
         width: $dropDown-width;
         box-shadow: 10px 10px 5px #888888;
         padding: 5px;

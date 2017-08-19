@@ -2328,76 +2328,77 @@
   overflow: visible;
   clip: auto; }
 
-.lmen-calendar input {
-  width: 100px; }
-
-.lmen-calendar .inline-link {
-  cursor: pointer; }
-
-.lmen-calendar .dropDown {
-  width: 255px;
-  box-shadow: 10px 10px 5px #888888;
-  padding: 5px;
-  border: 1px solid black; }
-  .lmen-calendar .dropDown.hide {
-    display: none; }
-  .lmen-calendar .dropDown.show {
-    display: block; }
-  .lmen-calendar .dropDown .currentSelectedDate {
-    color: red;
-    border-bottom: 1px dashed black; }
-  .lmen-calendar .dropDown .viewZone {
-    margin-top: 5px; }
-    .lmen-calendar .dropDown .viewZone .view .toolbar {
-      width: 100%; }
-      .lmen-calendar .dropDown .viewZone .view .toolbar .one {
-        float: left; }
-      .lmen-calendar .dropDown .viewZone .view .toolbar .buttons {
-        float: right; }
-        .lmen-calendar .dropDown .viewZone .view .toolbar .buttons .next {
-          margin-right: 5px; }
-      .lmen-calendar .dropDown .viewZone .view .toolbar .back {
-        margin-left: 5px; }
-    .lmen-calendar .dropDown .viewZone .view table.daysView {
-      clear: both;
-      border-collapse: collapse;
-      font-size: 15px;
-      margin: 4px auto 4px auto; }
-      .lmen-calendar .dropDown .viewZone .view table.daysView td {
-        text-align: center; }
-        .lmen-calendar .dropDown .viewZone .view table.daysView td.day-inactive {
-          color: lightslategrey; }
-        .lmen-calendar .dropDown .viewZone .view table.daysView td.header {
-          font-weight: bold;
-          text-transform: uppercase; }
-        .lmen-calendar .dropDown .viewZone .view table.daysView td.day-selected {
+.lmen-calendar {
+  position: relative; }
+  .lmen-calendar input {
+    width: 100px; }
+  .lmen-calendar .inline-link {
+    cursor: pointer; }
+  .lmen-calendar .dropDown {
+    position: absolute;
+    width: 255px;
+    box-shadow: 10px 10px 5px #888888;
+    padding: 5px;
+    border: 1px solid black; }
+    .lmen-calendar .dropDown.hide {
+      display: none; }
+    .lmen-calendar .dropDown.show {
+      display: block; }
+    .lmen-calendar .dropDown .currentSelectedDate {
+      color: red;
+      border-bottom: 1px dashed black; }
+    .lmen-calendar .dropDown .viewZone {
+      margin-top: 5px; }
+      .lmen-calendar .dropDown .viewZone .view .toolbar {
+        width: 100%; }
+        .lmen-calendar .dropDown .viewZone .view .toolbar .one {
+          float: left; }
+        .lmen-calendar .dropDown .viewZone .view .toolbar .buttons {
+          float: right; }
+          .lmen-calendar .dropDown .viewZone .view .toolbar .buttons .next {
+            margin-right: 5px; }
+        .lmen-calendar .dropDown .viewZone .view .toolbar .back {
+          margin-left: 5px; }
+      .lmen-calendar .dropDown .viewZone .view table.daysView {
+        clear: both;
+        border-collapse: collapse;
+        font-size: 15px;
+        margin: 4px auto 4px auto; }
+        .lmen-calendar .dropDown .viewZone .view table.daysView td {
+          text-align: center; }
+          .lmen-calendar .dropDown .viewZone .view table.daysView td.day-inactive {
+            color: lightslategrey; }
+          .lmen-calendar .dropDown .viewZone .view table.daysView td.header {
+            font-weight: bold;
+            text-transform: uppercase; }
+          .lmen-calendar .dropDown .viewZone .view table.daysView td.day-selected {
+            color: red; }
+      .lmen-calendar .dropDown .viewZone table.monthsView {
+        clear: both;
+        border-collapse: collapse;
+        font-size: 15px;
+        margin: 4px auto 4px auto; }
+        .lmen-calendar .dropDown .viewZone table.monthsView td {
+          padding: 4px;
+          text-align: center; }
+        .lmen-calendar .dropDown .viewZone table.monthsView .monthSelected {
           color: red; }
-    .lmen-calendar .dropDown .viewZone table.monthsView {
-      clear: both;
-      border-collapse: collapse;
-      font-size: 15px;
-      margin: 4px auto 4px auto; }
-      .lmen-calendar .dropDown .viewZone table.monthsView td {
-        padding: 4px;
-        text-align: center; }
-      .lmen-calendar .dropDown .viewZone table.monthsView .monthSelected {
-        color: red; }
-    .lmen-calendar .dropDown .viewZone table.yearsView {
-      clear: both;
-      font-size: 15px;
-      margin: 4px auto 4px auto; }
-      .lmen-calendar .dropDown .viewZone table.yearsView td {
-        padding: 4px; }
-      .lmen-calendar .dropDown .viewZone table.yearsView .yearSelected {
-        color: red; }
-  .lmen-calendar .dropDown .btnsToolbar {
-    margin: 5px; }
-    .lmen-calendar .dropDown .btnsToolbar button {
-      background-color: #a4d6ed;
-      border-radius: 4px;
-      border: 0;
-      margin: 5px;
-      color: darkblue;
-      padding-bottom: 3px;
-      padding-top: 3px;
-      width: 70px; }
+      .lmen-calendar .dropDown .viewZone table.yearsView {
+        clear: both;
+        font-size: 15px;
+        margin: 4px auto 4px auto; }
+        .lmen-calendar .dropDown .viewZone table.yearsView td {
+          padding: 4px; }
+        .lmen-calendar .dropDown .viewZone table.yearsView .yearSelected {
+          color: red; }
+    .lmen-calendar .dropDown .btnsToolbar {
+      margin: 5px; }
+      .lmen-calendar .dropDown .btnsToolbar button {
+        background-color: #a4d6ed;
+        border-radius: 4px;
+        border: 0;
+        margin: 5px;
+        color: darkblue;
+        padding-bottom: 3px;
+        padding-top: 3px;
+        width: 70px; }

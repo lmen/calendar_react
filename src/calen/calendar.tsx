@@ -3,7 +3,7 @@ import * as Mon from 'moment';
 import { CalendarDropDown } from './dropDown';
 import { CalendarState } from './redux/state';
 import { CalendarStateSubscriber, Store, } from './redux/dispatcher';
-import { DataChanged, OpenDropDown, InitState } from './redux/actions';
+import { DataChanged, OpenDropDown, InitState, CloseDropDownUserReectSelection } from './redux/actions';
 
 export interface Config {
     locale_code: string;
@@ -28,13 +28,23 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
 
         this.state = this.dispatcher.getCurrentState();
 
-        this.handleClick = this.handleClick.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleClickInInput = this.handleClickInInput.bind(this);
+        this.handleChangeInInput = this.handleChangeInInput.bind(this);
+        this.handleClickOutsideCalendarArea = this.handleClickOutsideCalendarArea.bind(this);
+        this.handleClickInCalendarArea = this.handleClickInCalendarArea.bind(this);
 
         console.log(
             'Calender componentDidMount initial state: sel: %s display: %s',
             this.state.selectedDateByUser,
             this.state.displayDate);
+    }
+
+    componentDidMount() {
+        document.addEventListener('click', this.handleClickOutsideCalendarArea);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('click', this.handleClickOutsideCalendarArea);
     }
 
     componentWillReceiveProps(nextProps: CProps) {
@@ -49,24 +59,41 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
         const currentDate = this.state.currentDate;
         const currentDateStr = currentDate ? currentDate.format() : '';
         return (
-            <div className="lmen-calendar">
+            <div className="lmen-calendar" onClick={this.handleClickInCalendarArea}>
                 <input
                     value={currentDateStr}
-                    onClick={this.handleClick}
-                    onChange={this.handleChange}
+                    onClick={this.handleClickInInput}
+                    onChange={this.handleChangeInInput}
                 />
                 {this.state.open ? <CalendarDropDown info={this.state} dispatcher={this.dispatcher} /> : false}
             </div>
         );
     }
 
-    handleClick() {
-        console.log('calendar click');
+    handleClickOutsideCalendarArea(evt: MouseEvent) {
+        // tslint:disable-next-line:no-any
+        let av = evt as any;
+        console.log('handleClickOutsideCalendarArea %s', av.calendarStamp);
+        if (av.calendarStamp && av.calendarStamp !== this) {
+            this.dispatcher.apply(new CloseDropDownUserReectSelection());
+        }
+    }
 
+    handleClickInCalendarArea(ev: React.MouseEvent<HTMLDivElement>) {
+        console.log('im in the main div onclick putting a stamp on the event handler');
+
+        // tslint:disable-next-line:no-any
+        let av = ev.nativeEvent as any;
+        av.calendarStamp = this;
+    }
+
+    handleClickInInput() {
+        console.log('calendar input click');
         this.dispatcher.apply(new OpenDropDown());
     }
 
-    handleChange() {
+    handleChangeInInput() {
+        // for not giving browser warning 
         console.log('calendar click');
     }
 
@@ -87,7 +114,7 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
             },
             () => {
                 let newDate = newState.selectedDateByUser;
-                if (newState.userEndSelection && diff(beforeDate, newDate)) {
+                if (newState.userEndSelection && areMomentsDifferent(beforeDate, newDate)) {
 
                     this.props.onDateChange(newDate);
                 }
@@ -97,8 +124,8 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
 
 }
 
-function diff(a: Mon.Moment | null, b: Mon.Moment | null): boolean {
-    if (a != null && b != null) {
+function areMomentsDifferent(a: Mon.Moment | null, b: Mon.Moment | null): boolean {
+    if (a !== null && b !== null) {
         return a.isSame(b);
     }
     return b !== a;
