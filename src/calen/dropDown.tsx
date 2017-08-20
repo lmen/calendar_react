@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { CalendarState, VIEW } from './redux/state';
-import { CalendarDays } from './daySelection';
-import { CalendarMonthSelect } from './monthSelection';
-import { CalendarYearSelect } from './yearSelection';
+import { CalendarState } from './redux/state';
 import { Store } from './redux/dispatcher';
 import { CloseDropDownUserAcceptSelection, CloseDropDownUserReectSelection } from './redux/actions';
+import { DateSelection } from './dateSelection';
+import { TimeSelection } from './timeSelection';
 
 interface CDDownProps {
     info: CalendarState;
@@ -20,7 +19,6 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
     }
 
     render() {
-        const view = this.props.info.currentView;
         const selectDate = this.props.info.selectedDateByUser;
         const css = `dropDown ${this.props.info.open ? 'show' : 'hide'}`;
         return (
@@ -28,18 +26,9 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
                 <div className="currentSelectedDateZone" title="Selected date">
                     {!selectDate ? 'Please select a date' : selectDate.format('YYYY-MM-DD')}
                 </div>
-                <div className="viewZone">
-                    {view === VIEW.DAY
-                        ? < CalendarDays
-                            localeCode={this.props.info.config.locale_code}
-                            displayDate={this.props.info.displayDate}
-                            selectedDate={this.props.info.selectedDateByUser}
-                            dispatcher={this.props.dispatcher}
-                        />
-                        : (view === VIEW.MONTH_LIST
-                            ? < CalendarMonthSelect info={this.props.info} dispatcher={this.props.dispatcher} />
-                            : < CalendarYearSelect info={this.props.info} dispatcher={this.props.dispatcher} />)
-                    }
+                <div className="selectionZone">
+                    <DateSelection info={this.props.info} dispatcher={this.props.dispatcher} />
+                    <TimeSelection info={this.props.info} dispatcher={this.props.dispatcher} />
                 </div>
                 <div className="btnsToolbar">
                     <button onClick={this.handleOk}> Ok </button>

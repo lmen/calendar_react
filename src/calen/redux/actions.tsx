@@ -219,3 +219,29 @@ export class CloseDropDownUserReectSelection implements Action {
         return { ...state, open };
     }
 }
+
+export enum TimePartNames {
+    hour, minutes // , seconds, amPm, timeZone
+}
+
+export class ChangeTimeDisplayed implements Action {
+
+    constructor(private partName: TimePartNames, private up: boolean) { }
+
+    public reduce(state: CalendarState): CalendarState {
+
+        let displayDate = state.displayDate.clone();
+
+        let parteName = this.partName.toString();
+        console.log(parteName);
+
+        if (this.partName === TimePartNames.hour) {
+            this.up ? displayDate.add(1, 'hour') : displayDate.subtract(1, 'hour');
+        }
+        if (this.partName === TimePartNames.minutes) {
+            this.up ? displayDate.add(1, 'minutes') : displayDate.subtract(1, 'minutes');
+        }
+
+        return { ...state, displayDate };
+    }
+}

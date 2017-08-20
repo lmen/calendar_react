@@ -26,79 +26,90 @@ $dropDown-width: 250px;
             font-size: 1.3rem;
             margin-bottom: 5px;
         }
-        .viewZone {
+        .selectionZone {
             margin-left: 5px;
             margin-right: 5px;
-            .view {
-                .toolbar {
-                    display: flex;
-                    flex-direction: row;
-                    flex-wrap: nowrap;
-                    width: 100%;
-                    .left-zone {
-                        margin-left: 2px;
-                        font-size: 1.2rem;
-                        flex: 0.75 70px; // size proportion (unitless)  minimum size
-                        justify-content: flex-start;
-                        span:nth-of-type(1) {
-                            margin-left: 0px;
+            .dateSelection {
+                .view {
+                    .toolbar {
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: nowrap;
+                        width: 100%;
+                        .left-zone {
+                            margin-left: 2px;
+                            font-size: 1.2rem;
+                            flex: 0.75 70px; // size proportion (unitless)  minimum size
+                            justify-content: flex-start;
+                            span:nth-of-type(1) {
+                                margin-left: 0px;
+                            }
+                            span {
+                                margin-left: 5px;
+                            }
                         }
-                        span {
-                            margin-left: 5px;
+                        .right-zone {
+                            flex: 0.25; // size proportion (unitless)  minimum size
+                            justify-content: flex-end;
+                            .next {
+                                margin-right: 5px;
+                            }
                         }
                     }
-                    .right-zone {
-                        flex: 0.25; // size proportion (unitless)  minimum size
-                        justify-content: flex-end;
-                        .next {
-                            margin-right: 5px;
+                    table.daysView {
+                        cursor: pointer;
+                        border-collapse: collapse;
+                        margin-top: 5px;
+                        font-size: 0.95rem;
+                        td {
+                            text-align: center;
+                            &.day-inactive {
+                                cursor: text;
+                                color: lightslategrey;
+                            }
+                            &.header {
+                                cursor: text;
+                                font-weight: bold;
+                                text-transform: uppercase;
+                            }
+                            &.day-selected {
+                                color: red;
+                            }
                         }
                     }
                 }
-                table.daysView {
-                    cursor: pointer;
+                table.monthsView {
                     border-collapse: collapse;
+                    margin: 5px auto 0px auto;
+                    font-size: 0.95rem;
+                    td {
+                        cursor: pointer;
+                        padding: 4px;
+                        text-align: center;
+                    }
+                    .monthSelected {
+                        color: red;
+                    }
+                }
+                table.yearsView {
                     margin-top: 5px;
                     font-size: 0.95rem;
                     td {
-                        text-align: center;
-                        &.day-inactive {
-                            cursor: text;
-                            color: lightslategrey;
-                        }
-                        &.header {
-                            cursor: text;
-                            font-weight: bold;
-                            text-transform: uppercase;
-                        }
-                        &.day-selected {
-                            color: red;
-                        }
+                        cursor: pointer;
+                        padding: 2px;
+                    }
+                    .yearSelected {
+                        color: red;
                     }
                 }
             }
-            table.monthsView {
-                border-collapse: collapse;
-                margin: 5px auto 0px auto;
-                font-size: 0.95rem;
-                td {
-                    cursor: pointer;
-                    padding: 4px;
-                    text-align: center;
-                }
-                .monthSelected {
-                    color: red;
-                }
-            }
-            table.yearsView {
-                margin-top: 5px;
-                font-size: 0.95rem;
-                td {
-                    cursor: pointer;
-                    padding: 2px;
-                }
-                .yearSelected {
-                    color: red;
+            .timeSelectionZone {
+                table {
+                    border-collapse: collapse;
+                    margin: 5px auto 0px auto;
+                    td {
+                        text-align: center;
+                    }
                 }
             }
         }

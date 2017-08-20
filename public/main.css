@@ -2350,62 +2350,67 @@
       color: red;
       font-size: 1.3rem;
       margin-bottom: 5px; }
-    .lmen-calendar .dropDown .viewZone {
+    .lmen-calendar .dropDown .selectionZone {
       margin-left: 5px;
       margin-right: 5px; }
-      .lmen-calendar .dropDown .viewZone .view .toolbar {
+      .lmen-calendar .dropDown .selectionZone .dateSelection .view .toolbar {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         width: 100%; }
-        .lmen-calendar .dropDown .viewZone .view .toolbar .left-zone {
+        .lmen-calendar .dropDown .selectionZone .dateSelection .view .toolbar .left-zone {
           margin-left: 2px;
           font-size: 1.2rem;
           flex: 0.75 70px;
           justify-content: flex-start; }
-          .lmen-calendar .dropDown .viewZone .view .toolbar .left-zone span:nth-of-type(1) {
+          .lmen-calendar .dropDown .selectionZone .dateSelection .view .toolbar .left-zone span:nth-of-type(1) {
             margin-left: 0px; }
-          .lmen-calendar .dropDown .viewZone .view .toolbar .left-zone span {
+          .lmen-calendar .dropDown .selectionZone .dateSelection .view .toolbar .left-zone span {
             margin-left: 5px; }
-        .lmen-calendar .dropDown .viewZone .view .toolbar .right-zone {
+        .lmen-calendar .dropDown .selectionZone .dateSelection .view .toolbar .right-zone {
           flex: 0.25;
           justify-content: flex-end; }
-          .lmen-calendar .dropDown .viewZone .view .toolbar .right-zone .next {
+          .lmen-calendar .dropDown .selectionZone .dateSelection .view .toolbar .right-zone .next {
             margin-right: 5px; }
-      .lmen-calendar .dropDown .viewZone .view table.daysView {
+      .lmen-calendar .dropDown .selectionZone .dateSelection .view table.daysView {
         cursor: pointer;
         border-collapse: collapse;
         margin-top: 5px;
         font-size: 0.95rem; }
-        .lmen-calendar .dropDown .viewZone .view table.daysView td {
+        .lmen-calendar .dropDown .selectionZone .dateSelection .view table.daysView td {
           text-align: center; }
-          .lmen-calendar .dropDown .viewZone .view table.daysView td.day-inactive {
+          .lmen-calendar .dropDown .selectionZone .dateSelection .view table.daysView td.day-inactive {
             cursor: text;
             color: lightslategrey; }
-          .lmen-calendar .dropDown .viewZone .view table.daysView td.header {
+          .lmen-calendar .dropDown .selectionZone .dateSelection .view table.daysView td.header {
             cursor: text;
             font-weight: bold;
             text-transform: uppercase; }
-          .lmen-calendar .dropDown .viewZone .view table.daysView td.day-selected {
+          .lmen-calendar .dropDown .selectionZone .dateSelection .view table.daysView td.day-selected {
             color: red; }
-      .lmen-calendar .dropDown .viewZone table.monthsView {
+      .lmen-calendar .dropDown .selectionZone .dateSelection table.monthsView {
         border-collapse: collapse;
         margin: 5px auto 0px auto;
         font-size: 0.95rem; }
-        .lmen-calendar .dropDown .viewZone table.monthsView td {
+        .lmen-calendar .dropDown .selectionZone .dateSelection table.monthsView td {
           cursor: pointer;
           padding: 4px;
           text-align: center; }
-        .lmen-calendar .dropDown .viewZone table.monthsView .monthSelected {
+        .lmen-calendar .dropDown .selectionZone .dateSelection table.monthsView .monthSelected {
           color: red; }
-      .lmen-calendar .dropDown .viewZone table.yearsView {
+      .lmen-calendar .dropDown .selectionZone .dateSelection table.yearsView {
         margin-top: 5px;
         font-size: 0.95rem; }
-        .lmen-calendar .dropDown .viewZone table.yearsView td {
+        .lmen-calendar .dropDown .selectionZone .dateSelection table.yearsView td {
           cursor: pointer;
           padding: 2px; }
-        .lmen-calendar .dropDown .viewZone table.yearsView .yearSelected {
+        .lmen-calendar .dropDown .selectionZone .dateSelection table.yearsView .yearSelected {
           color: red; }
+      .lmen-calendar .dropDown .selectionZone .timeSelectionZone table {
+        border-collapse: collapse;
+        margin: 5px auto 0px auto; }
+        .lmen-calendar .dropDown .selectionZone .timeSelectionZone table td {
+          text-align: center; }
     .lmen-calendar .dropDown .btnsToolbar {
       display: flex;
       flex-direction: row;
