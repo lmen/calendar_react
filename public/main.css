@@ -2373,14 +2373,17 @@
           .lmen-calendar .dropDown .viewZone .view .toolbar .right-zone .next {
             margin-right: 5px; }
       .lmen-calendar .dropDown .viewZone .view table.daysView {
+        cursor: pointer;
         border-collapse: collapse;
         margin-top: 5px;
         font-size: 0.95rem; }
         .lmen-calendar .dropDown .viewZone .view table.daysView td {
           text-align: center; }
           .lmen-calendar .dropDown .viewZone .view table.daysView td.day-inactive {
+            cursor: text;
             color: lightslategrey; }
           .lmen-calendar .dropDown .viewZone .view table.daysView td.header {
+            cursor: text;
             font-weight: bold;
             text-transform: uppercase; }
           .lmen-calendar .dropDown .viewZone .view table.daysView td.day-selected {

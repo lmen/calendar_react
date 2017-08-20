@@ -56,15 +56,18 @@ $dropDown-width: 250px;
                     }
                 }
                 table.daysView {
+                    cursor: pointer;
                     border-collapse: collapse;
                     margin-top: 5px;
                     font-size: 0.95rem;
                     td {
                         text-align: center;
                         &.day-inactive {
+                            cursor: text;
                             color: lightslategrey;
                         }
                         &.header {
+                            cursor: text;
                             font-weight: bold;
                             text-transform: uppercase;
                         }
