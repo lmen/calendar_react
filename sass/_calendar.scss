@@ -1,8 +1,8 @@
-$dropDown-width: 255px;
+$dropDown-width: 250px;
 .lmen-calendar {
     position: relative;
     input {
-        width: 150px;
+        width: 170px;
         border: 0px;
     }
     .inline-link {
@@ -14,6 +14,7 @@ $dropDown-width: 255px;
         box-shadow: 10px 10px 5px #888888;
         padding: 5px;
         border: 1px solid black;
+        font-size: 1rem;
         &.hide {
             display: none;
         }
@@ -23,9 +24,11 @@ $dropDown-width: 255px;
         .currentSelectedDateZone {
             color: red; //border-bottom: 1px dashed black;
             font-size: 1.3rem;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         .viewZone {
+            margin-left: 5px;
+            margin-right: 5px;
             .view {
                 .toolbar {
                     display: flex;
@@ -33,6 +36,8 @@ $dropDown-width: 255px;
                     flex-wrap: nowrap;
                     width: 100%;
                     .left-zone {
+                        margin-left: 2px;
+                        font-size: 1.2rem;
                         flex: 0.75 70px; // size proportion (unitless)  minimum size
                         justify-content: flex-start;
                         span:nth-of-type(1) {
@@ -52,8 +57,8 @@ $dropDown-width: 255px;
                 }
                 table.daysView {
                     border-collapse: collapse;
-                    font-size: 15px;
-                    margin: 4px auto 4px auto;
+                    margin-top: 5px;
+                    font-size: 0.95rem;
                     td {
                         text-align: center;
                         &.day-inactive {
