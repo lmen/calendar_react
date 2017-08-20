@@ -73,8 +73,8 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
     handleClickOutsideCalendarArea(evt: MouseEvent) {
         // tslint:disable-next-line:no-any
         let av = evt as any;
-        console.log('handleClickOutsideCalendarArea %s', av.calendarStamp);
-        if (av.calendarStamp && av.calendarStamp !== this) {
+        console.log('handleClickOutsideCalendarArea %s', av.calendarStamp !== undefined);
+        if (this.state.open && av.calendarStamp !== this) {
             this.dispatcher.apply(new CloseDropDownUserReectSelection());
         }
     }

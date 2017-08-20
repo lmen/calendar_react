@@ -25,8 +25,8 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
         const css = `dropDown ${this.props.info.open ? 'show' : 'hide'}`;
         return (
             <div className={css}>
-                <div className="currentSelectedDate">
-                    {!selectDate ? 'Select a date' : selectDate.format('YYYY-MM-DD')}
+                <div className="currentSelectedDateZone" title="Selected date">
+                    {!selectDate ? 'Please select a date' : selectDate.format('YYYY-MM-DD')}
                 </div>
                 <div className="viewZone">
                     {view === VIEW.DAY
