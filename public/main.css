@@ -2387,18 +2387,20 @@
             color: red; }
       .lmen-calendar .dropDown .viewZone table.monthsView {
         border-collapse: collapse;
-        font-size: 15px;
-        margin: 4px auto 4px auto; }
+        margin: 5px auto 0px auto;
+        font-size: 0.95rem; }
         .lmen-calendar .dropDown .viewZone table.monthsView td {
+          cursor: pointer;
           padding: 4px;
           text-align: center; }
         .lmen-calendar .dropDown .viewZone table.monthsView .monthSelected {
           color: red; }
       .lmen-calendar .dropDown .viewZone table.yearsView {
-        font-size: 15px;
-        margin: 4px auto 4px auto; }
+        margin-top: 5px;
+        font-size: 0.95rem; }
         .lmen-calendar .dropDown .viewZone table.yearsView td {
-          padding: 4px; }
+          cursor: pointer;
+          padding: 2px; }
         .lmen-calendar .dropDown .viewZone table.yearsView .yearSelected {
           color: red; }
     .lmen-calendar .dropDown .btnsToolbar {
