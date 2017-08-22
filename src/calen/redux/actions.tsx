@@ -230,6 +230,10 @@ export class ChangeTimeDisplayed implements Action {
 
     public reduce(state: CalendarState): CalendarState {
 
+        if (!state.selectedDateByUser) {
+            return state; // just for change
+        }
+
         let displayDate = state.displayDate.clone();
 
         let parteName = this.partName.toString();
@@ -242,6 +246,10 @@ export class ChangeTimeDisplayed implements Action {
             this.up ? displayDate.add(1, 'minutes') : displayDate.subtract(1, 'minutes');
         }
 
-        return { ...state, displayDate };
+        let selectedDateByUser = state.selectedDateByUser.clone();
+        selectedDateByUser.hour(displayDate.hour());
+        selectedDateByUser.minutes(displayDate.minutes());
+
+        return { ...state, displayDate, selectedDateByUser };
     }
 }
