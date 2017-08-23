@@ -1,4 +1,4 @@
-import { CalendarState, VIEW } from './state';
+import { CalendarState, VIEW, TIME_ZONE_VALUES } from './state';
 import { ViewPort } from './utils';
 import * as Mom from 'moment';
 import { Config } from '../calendar';
@@ -30,7 +30,12 @@ export class InitState implements InitialState {
         oldState.displayDate = date.clone().date(1);
         oldState.selectedDateByUser = date;
 
-        // oldState.displayDate.locale(this.config.locale_code);
+        oldState.timeSelection24Hours = false; // it should depend from the locale config
+        oldState.timeSelectionShowSeconds = true;
+        oldState.timeSelectionShowTimeZone = true;
+
+        oldState.timeSelectionAmPmIndex = 0;
+        oldState.timeSelectionTimeZoneIndex = 0;
 
         return oldState;
     }
@@ -221,7 +226,7 @@ export class CloseDropDownUserReectSelection implements Action {
 }
 
 export enum TimePartNames {
-    hour, minutes // , seconds, amPm, timeZone
+    hour, minutes, seconds, amPm, timeZone
 }
 
 export class ChangeTimeDisplayed implements Action {
@@ -245,11 +250,28 @@ export class ChangeTimeDisplayed implements Action {
         if (this.partName === TimePartNames.minutes) {
             this.up ? displayDate.add(1, 'minutes') : displayDate.subtract(1, 'minutes');
         }
+        if (this.partName === TimePartNames.seconds) {
+            this.up ? displayDate.add(1, 'seconds') : displayDate.subtract(1, 'seconds');
+        }
+
+        let timeSelectionAmPmIndex = state.timeSelectionAmPmIndex;
+        if (this.partName === TimePartNames.amPm) {
+            const arraySize = 2;
+            timeSelectionAmPmIndex = Math.abs((timeSelectionAmPmIndex + (this.up ? +1 : -1)) % arraySize);
+            // needs to change on the moment.
+        }
+
+        let timeSelectionTimeZoneIndex = state.timeSelectionTimeZoneIndex;
+        if (this.partName === TimePartNames.timeZone) {
+            const arraySize = TIME_ZONE_VALUES.length;
+            timeSelectionTimeZoneIndex = Math.abs((timeSelectionTimeZoneIndex + (this.up ? +1 : -1)) % arraySize);
+            // needs to change on the moment.
+        }
 
         let selectedDateByUser = state.selectedDateByUser.clone();
         selectedDateByUser.hour(displayDate.hour());
         selectedDateByUser.minutes(displayDate.minutes());
 
-        return { ...state, displayDate, selectedDateByUser };
+        return { ...state, displayDate, selectedDateByUser, timeSelectionAmPmIndex, timeSelectionTimeZoneIndex };
     }
 }

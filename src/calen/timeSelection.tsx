@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CalendarState } from './redux/state';
+import { CalendarState, AM_PM_VALUES, TIME_ZONE_VALUES } from './redux/state';
 import { Store } from './redux/dispatcher';
 import { ChangeTimeDisplayed, TimePartNames } from './redux/actions';
 
@@ -23,9 +23,13 @@ export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
         const displayDate = this.props.info.displayDate;
         const hour = lpad(displayDate.hour());
         const min = lpad(displayDate.minutes());
+        const seconds = lpad(displayDate.seconds());
         // const seg = '09';
-        const amPm = 'AM';
-        const timeZone = 'Lisbon';
+        const amPm = AM_PM_VALUES[this.props.info.timeSelectionAmPmIndex];
+        const timeZone = TIME_ZONE_VALUES[this.props.info.timeSelectionTimeZoneIndex];
+        const hideAmPm = this.props.info.timeSelection24Hours;
+        const hideTimeZone = !this.props.info.timeSelectionShowTimeZone;
+        const hideSeconds = !this.props.info.timeSelectionShowSeconds;
 
         return (
 
@@ -33,46 +37,36 @@ export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
                 <table>
                     <tbody>
                         <tr>
-                            <td onClick={this.handleClick} className="hour up">
-                                <span className="fa fa-plus " />
-                            </td>
-                            <td><span /></td>
-                            <td onClick={this.handleClick} className="min up">
-                                <span className="fa fa-plus " />
-                            </td>
-                            <td><span /></td>
-                            <td onClick={this.handleClick} className="amPm up">
-                                <span className="fa fa-plus " />
-                            </td>
-                            <td onClick={this.handleClick} className="timezone up">
-                                <span className="fa fa-plus " />
-                            </td>
+                            {this.renderUp('hour')}
+                            {this.renderValue()}
+                            {this.renderUp('min')}
+                            {this.renderValue('', hideSeconds)}
+                            {this.renderUp('sec', hideSeconds)}
+                            {this.renderValue()}
+                            {this.renderUp('amPm', hideAmPm)}
+                            {this.renderUp('timezone', hideTimeZone)}
                         </tr>
 
                         <tr>
-                            <td><span>{hour}</span></td>
-                            <td><span>:</span></td>
-                            <td><span>{min}</span></td>
-                            <td><span /></td>
-                            <td><span>{amPm}</span></td>
-                            <td><span>{timeZone}</span></td>
+                            {this.renderValue(hour)}
+                            {this.renderValue(':')}
+                            {this.renderValue(min)}
+                            {this.renderValue(':', hideSeconds)}
+                            {this.renderValue(seconds, hideSeconds)}
+                            {this.renderValue()}
+                            {this.renderValue(amPm, hideAmPm)}
+                            {this.renderValue(timeZone, hideTimeZone)}
                         </tr>
 
                         <tr>
-                            <td onClick={this.handleClick} className="hour down">
-                                <span className="fa fa-minus" />
-                            </td>
-                            <td><span /></td>
-                            <td onClick={this.handleClick} className="min down">
-                                <span className="fa fa-minus " />
-                            </td>
-                            <td><span /></td>
-                            <td onClick={this.handleClick} className="amPm down">
-                                <span className="fa fa-minus " />
-                            </td>
-                            <td onClick={this.handleClick} className="timezone down">
-                                <span className="fa fa-minus " />
-                            </td>
+                            {this.renderDown('hour')}
+                            {this.renderValue()}
+                            {this.renderDown('min')}
+                            {this.renderValue('', hideSeconds)}
+                            {this.renderDown('sec', hideSeconds)}
+                            {this.renderValue()}
+                            {this.renderDown('amPm', hideAmPm)}
+                            {this.renderDown('timezone', hideTimeZone)}
                         </tr>
                     </tbody>
                 </table>
@@ -98,6 +92,15 @@ export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
             if ('min' === partName) {
                 return TimePartNames.minutes;
             }
+            if ('sec' === partName) {
+                return TimePartNames.seconds;
+            }
+            if ('amPm' === partName) {
+                return TimePartNames.amPm;
+            }
+            if ('timezone' === partName) {
+                return TimePartNames.timeZone;
+            }
             return TimePartNames.hour;
         }
 
@@ -105,5 +108,29 @@ export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
         let up = directions === 'up';
         this.props.dispatcher.apply(new ChangeTimeDisplayed(timePartName, up));
         console.log('click %s', classes);
+    }
+
+    private renderValue(value: string = '', hide: boolean = false) {
+        return hide ? false : (<td><span />{value}</td>);
+    }
+
+    private renderUp(name: string, hide: boolean = false) {
+        const css = name + ' up';
+        return hide ? false :
+            (
+                <td onClick={this.handleClick} className={css}>
+                    <span className="fa fa-plus" />
+                </td>
+            );
+    }
+
+    private renderDown(name: string, hide: boolean = false) {
+        const css = name + ' down';
+        return hide ? false :
+            (
+                <td onClick={this.handleClick} className={css}>
+                    <span className="fa fa-minus" />
+                </td>
+            );
     }
 }
