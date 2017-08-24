@@ -153,3 +153,143 @@ export class ViewPort {
     }
 
 }
+
+export class TimeUtils {
+
+    /*
+Here's how to convert time on a 24-hour clock to the 12-hour system:
+
+    From 0:00 (midnight) to 0:59, add 12 hours and use am.
+    0:49 = 12:49 am (0:49 + 12)
+
+    From 1:00 to 11:59, just add am after the time.
+    11:49 = 11:49 am
+
+    From 12:00 to 12:59, just add pm after the time.
+    12:49 = 12:49 pm
+
+    From 13:00 to 0:00, subtract 12 hours and use pm.
+    13:49 = 1:49 pm (13:49 - 12)
+
+*/
+    public toAMPmFormat(hour24: number): { hourAMPM: number, isAm: boolean } {
+        let a = hour24 % 12;
+        return {
+            hourAMPM: a === 0 ? 12 : a,
+            isAm: (hour24 / 12) < 1
+        };
+    }
+
+    /*
+    To convert am or pm time to the 24-hour format, use these rules:
+    
+        From midnight to 12:59 am, subtract 12 hours.
+        12:49 am = 0:49 (12:49 – 12)
+    
+        From 1 am to noon, do nothing.
+        11:49 am = 11:49
+    
+        From 12:01 pm to 12:59 pm, do nothing.
+        12:49 pm = 12:49
+    
+        From 1:00 pm to midnight, add 12 hours.
+        1:49 pm = 13:49 (1:49 + 12)
+    */
+    public to24Hours(amPmHour: number, isAm: boolean) {
+        return isAm ? (amPmHour === 12 ? 0 : amPmHour) : /* pm case */ ((amPmHour === 12 ? 0 : amPmHour) + 12);
+    }
+
+}
+
+export class MomentToSceen {
+
+    hour: string;
+    min: string;
+    seconds: string;
+    isAm: boolean;
+
+    constructor(moment: Mom.Moment, isAmPm: boolean) {
+        this.convert(moment, isAmPm);
+    }
+
+    private convert(moment: Mom.Moment, isAmPm: boolean) {
+        let isAm = false;
+        let h = moment.hour();
+        if (isAmPm) {
+            let amPmFormat = new TimeUtils().toAMPmFormat(h);
+            h = amPmFormat.hourAMPM;
+            isAm = amPmFormat.isAm;
+        }
+        this.isAm = isAm;
+        this.hour = lpad(h);
+
+        this.min = lpad(moment.minutes());
+        this.seconds = lpad(moment.seconds());
+    }
+
+}
+
+function buildValues(start: number, end: number): Value<number>[] {
+    let res: Value<number>[] = [];
+    for (let index = start; index < end; index++) {
+        let v: Value<number> = { key: index, label: lpad(index) };
+        res.push(v);
+    }
+    return res;
+}
+
+export function lpad(n: number): string {
+    return n < 10 ? '0' + n : Number(n).toString();
+}
+
+export const HoursAmPm: Value<number>[] = buildValues(1, 11);
+HoursAmPm.unshift({ key: 12, label: '12' });
+export const Hours24: Value<number>[] = buildValues(0, 24);
+export const MinutesSeconds: Value<number>[] = buildValues(0, 60);
+
+export const AM_PM_VALUES: Value<string>[] = [
+    { key: 'am', label: 'AM' },
+    { key: 'pm', label: 'PM' }
+];
+export const TIME_ZONE_VALUES: Value<string>[] = [
+    { key: 'LISBON', label: 'LISBON' },
+    { key: 'MADRID', label: 'MADRID' },
+    { key: 'ROME', label: 'ROME' },
+    { key: 'PARIS', label: 'PARIS' }
+];
+
+export class Value<K> {
+    key: K;
+    label: string;
+}
+
+export class ValueList<K> {
+    currentIndex: number;
+
+    constructor(private values: Value<K>[]) {
+        this.currentIndex = 0;
+    }
+
+    selectKey(key: K) {
+        this.values.find((v) => v.key === key);
+    }
+
+    moveUp() {
+        this.currentIndex++;
+        if (this.currentIndex >= this.values.length) {
+            this.currentIndex = 0;
+        }
+    }
+
+    moveDown() {
+        this.currentIndex--;
+        if (this.currentIndex < 0) {
+            this.currentIndex = this.values.length - 1;
+        }
+    }
+
+    getLabelFromSelected() {
+        return this.values[this.currentIndex].key;
+    }
+
+}

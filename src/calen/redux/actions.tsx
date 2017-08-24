@@ -1,5 +1,8 @@
-import { CalendarState, VIEW, TIME_ZONE_VALUES } from './state';
-import { ViewPort } from './utils';
+import { CalendarState, VIEW } from './state';
+import {
+    ViewPort, TIME_ZONE_VALUES, ValueList, Hours24, HoursAmPm,
+    MinutesSeconds, AM_PM_VALUES, TimeUtils
+} from './utils';
 import * as Mom from 'moment';
 import { Config } from '../calendar';
 
@@ -30,13 +33,24 @@ export class InitState implements InitialState {
         oldState.displayDate = date.clone().date(1);
         oldState.selectedDateByUser = date;
 
-        oldState.timeSelection24Hours = false; // it should depend from the locale config
-        oldState.timeSelectionShowSeconds = true;
-        oldState.timeSelectionShowTimeZone = true;
+        let mode24Hours = false;
+        oldState.timeSelection.mode24Hours = mode24Hours; // it should depend from the locale config
+        oldState.timeSelection.showSeconds = true;
+        oldState.timeSelection.showTimeZone = true;
 
-        oldState.timeSelectionAmPmIndex = 0;
-        oldState.timeSelectionTimeZoneIndex = 0;
+        oldState.timeSelection.hourList = new ValueList<number>(mode24Hours ? Hours24 : HoursAmPm);
+        oldState.timeSelection.minuteList = new ValueList<number>(MinutesSeconds);
+        oldState.timeSelection.secondList = new ValueList<number>(MinutesSeconds);
+        oldState.timeSelection.amPmList = new ValueList<string>(AM_PM_VALUES);
+        oldState.timeSelection.timeZoneIndex = new ValueList<string>(TIME_ZONE_VALUES);
 
+        if (!mode24Hours) {
+            let p = new TimeUtils().toAMPmFormat(date.hours());
+            oldState.timeSelection.hourList.selectKey(p.hourAMPM);
+            oldState.timeSelection.amPmList.selectKey(p.isAm ? AM_PM_VALUES[0].key : AM_PM_VALUES[1].key);
+        }
+        oldState.timeSelection.minuteList.selectKey(date.minutes());
+        oldState.timeSelection.secondList.selectKey(date.seconds());
         return oldState;
     }
 }

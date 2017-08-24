@@ -2,7 +2,7 @@
 // import * as React from 'react';
 import * as Mom from 'moment';
 import {
-    listToMatrix, yearsMatrix, findRowOfyear
+    listToMatrix, yearsMatrix, findRowOfyear, TimeUtils
 } from './redux/utils';
 
 import 'moment/locale/fr';
@@ -111,5 +111,18 @@ it('localization', () => {
     expect(firstDayOfDisplayMonth.isoWeekday()).toBe(2);
     expect(firstDayOfDisplayMonth.weekday()).toBe(1);
     expect(mo.weekdays()[firstDayOfDisplayMonth.weekday()]).toBe('Segunda-Feira');
+
+});
+
+it('TimeInformatio', () => {
+
+    let time = new TimeUtils();
+
+    for (let i = 0; i < 24; i++) {
+        let aaa = time.toAMPmFormat(i);
+        let bbb = time.to24Hours(aaa.hourAMPM, aaa.isAm);
+        console.log(i + ' = ' + aaa.hourAMPM + ' ' + (aaa.isAm ? 'AM' : 'PM') + ' :: ' + bbb);
+        expect(bbb).toBe(i);
+    }
 
 });

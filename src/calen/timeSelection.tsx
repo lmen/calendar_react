@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { CalendarState, AM_PM_VALUES, TIME_ZONE_VALUES } from './redux/state';
+import { CalendarState } from './redux/state';
 import { Store } from './redux/dispatcher';
 import { ChangeTimeDisplayed, TimePartNames } from './redux/actions';
+import { AM_PM_VALUES, TIME_ZONE_VALUES, MomentToSceen } from './redux/utils';
 
 interface TimeSelectionProps {
     info: CalendarState;
     dispatcher: Store;
-}
-
-function lpad(n: number): string {
-    return n < 10 ? '0' + n : Number(n).toString();
 }
 
 export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
@@ -20,16 +17,18 @@ export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
     }
 
     render() {
-        const displayDate = this.props.info.displayDate;
-        const hour = lpad(displayDate.hour());
-        const min = lpad(displayDate.minutes());
-        const seconds = lpad(displayDate.seconds());
-        // const seg = '09';
-        const amPm = AM_PM_VALUES[this.props.info.timeSelectionAmPmIndex];
-        const timeZone = TIME_ZONE_VALUES[this.props.info.timeSelectionTimeZoneIndex];
         const hideAmPm = this.props.info.timeSelection24Hours;
         const hideTimeZone = !this.props.info.timeSelectionShowTimeZone;
         const hideSeconds = !this.props.info.timeSelectionShowSeconds;
+        const displayDate = this.props.info.displayDate;
+
+        let screen = new MomentToSceen(displayDate, !hideAmPm);
+        const hour = screen.hour;
+        const min = screen.min;
+        const seconds = screen.seconds;
+
+        const amPm = AM_PM_VALUES[this.props.info.timeSelectionAmPmIndex];
+        const timeZone = TIME_ZONE_VALUES[this.props.info.timeSelectionTimeZoneIndex];
 
         return (
 

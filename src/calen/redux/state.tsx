@@ -1,10 +1,8 @@
 import * as Mom from 'moment';
 import { Config } from '../calendar';
+import { ValueList } from './utils';
 
 export enum VIEW { DAY, MONTH_LIST, YEAR_LIST }
-
-export const AM_PM_VALUES = ['AM', 'PM'];
-export const TIME_ZONE_VALUES = ['LISBON', 'MADRID', 'PARIS', 'ROME'];
 
 export class CalendarState {
 
@@ -16,13 +14,19 @@ export class CalendarState {
     selectedDateByUser: Mom.Moment | null;
     yearStartLine: number;
 
-    timeSelection24Hours: boolean;
-    timeSelectionShowSeconds: boolean;
-    timeSelectionShowTimeZone: boolean;
+    timeSelection: {
+        mode24Hours: boolean;
+        showSeconds: boolean;
+        showTimeZone: boolean;
 
-    // selected by user
-    timeSelectionAmPmIndex: number;
-    timeSelectionTimeZoneIndex: number;
+        // selected by user
+        hourList: ValueList<number>
+        minuteList: ValueList<number>
+        secondList: ValueList<number>
+        amPmList: ValueList<string>
+        timeZoneIndex: ValueList<string>;
+
+    };
 
     config: Config;
 
