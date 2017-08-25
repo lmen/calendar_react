@@ -2406,11 +2406,19 @@
           padding: 2px; }
         .lmen-calendar .dropDown .selectionZone .dateSelection table.yearsView .yearSelected {
           color: red; }
-      .lmen-calendar .dropDown .selectionZone .timeSelectionZone table {
-        border-collapse: collapse;
-        margin: 5px auto 0px auto; }
-        .lmen-calendar .dropDown .selectionZone .timeSelectionZone table td {
-          text-align: center; }
+      .lmen-calendar .dropDown .selectionZone .timeSelectionZone {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center; }
+        .lmen-calendar .dropDown .selectionZone .timeSelectionZone table {
+          flex: 1;
+          border-collapse: collapse;
+          margin: 5px auto 0px auto; }
+          .lmen-calendar .dropDown .selectionZone .timeSelectionZone table td {
+            text-align: center; }
+        .lmen-calendar .dropDown .selectionZone .timeSelectionZone .separator {
+          font-size: 1.2rem; }
     .lmen-calendar .dropDown .btnsToolbar {
       display: flex;
       flex-direction: row;

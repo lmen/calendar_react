@@ -1,4 +1,4 @@
-import { CalendarState, VIEW } from './state';
+import { CalendarState, VIEW, TimeSelectionState } from './state';
 import {
     ViewPort, TIME_ZONE_VALUES, ValueList, Hours24, HoursAmPm,
     MinutesSeconds, AM_PM_VALUES, TimeUtils
@@ -33,6 +33,7 @@ export class InitState implements InitialState {
         oldState.displayDate = date.clone().date(1);
         oldState.selectedDateByUser = date;
 
+        oldState.timeSelection = new TimeSelectionState();
         let mode24Hours = false;
         oldState.timeSelection.mode24Hours = mode24Hours; // it should depend from the locale config
         oldState.timeSelection.showSeconds = true;
@@ -267,25 +268,26 @@ export class ChangeTimeDisplayed implements Action {
         if (this.partName === TimePartNames.seconds) {
             this.up ? displayDate.add(1, 'seconds') : displayDate.subtract(1, 'seconds');
         }
-
-        let timeSelectionAmPmIndex = state.timeSelectionAmPmIndex;
-        if (this.partName === TimePartNames.amPm) {
-            const arraySize = 2;
-            timeSelectionAmPmIndex = Math.abs((timeSelectionAmPmIndex + (this.up ? +1 : -1)) % arraySize);
-            // needs to change on the moment.
-        }
-
-        let timeSelectionTimeZoneIndex = state.timeSelectionTimeZoneIndex;
-        if (this.partName === TimePartNames.timeZone) {
-            const arraySize = TIME_ZONE_VALUES.length;
-            timeSelectionTimeZoneIndex = Math.abs((timeSelectionTimeZoneIndex + (this.up ? +1 : -1)) % arraySize);
-            // needs to change on the moment.
-        }
-
+        /*
+                let timeSelectionAmPmIndex = state.timeSelectionAmPmIndex;
+                if (this.partName === TimePartNames.amPm) {
+                    const arraySize = 2;
+                    timeSelectionAmPmIndex = Math.abs((timeSelectionAmPmIndex + (this.up ? +1 : -1)) % arraySize);
+                    // needs to change on the moment.
+                }
+        
+                let timeSelectionTimeZoneIndex = state.timeSelectionTimeZoneIndex;
+                if (this.partName === TimePartNames.timeZone) {
+                    const arraySize = TIME_ZONE_VALUES.length;
+                    timeSelectionTimeZoneIndex = Math.abs((timeSelectionTimeZoneIndex + (this.up ? +1 : -1))
+                     % arraySize);
+                    // needs to change on the moment.
+                }
+        */
         let selectedDateByUser = state.selectedDateByUser.clone();
         selectedDateByUser.hour(displayDate.hour());
         selectedDateByUser.minutes(displayDate.minutes());
 
-        return { ...state, displayDate, selectedDateByUser, timeSelectionAmPmIndex, timeSelectionTimeZoneIndex };
+        return { ...state, displayDate, selectedDateByUser }; // , timeSelectionAmPmIndex, timeSelectionTimeZoneIndex };
     }
 }

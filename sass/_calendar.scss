@@ -104,12 +104,20 @@ $dropDown-width: 250px;
                 }
             }
             .timeSelectionZone {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: center;
                 table {
+                    flex: 1;
                     border-collapse: collapse;
                     margin: 5px auto 0px auto;
                     td {
                         text-align: center;
                     }
+                }
+                .separator {
+                    font-size: 1.2rem;
                 }
             }
         }

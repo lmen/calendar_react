@@ -2,7 +2,8 @@ import * as React from 'react';
 import { CalendarState } from './redux/state';
 import { Store } from './redux/dispatcher';
 import { ChangeTimeDisplayed, TimePartNames } from './redux/actions';
-import { AM_PM_VALUES, TIME_ZONE_VALUES, MomentToSceen } from './redux/utils';
+import { AM_PM_VALUES, TIME_ZONE_VALUES, MinutesSeconds, Hours24, HoursAmPm } from './redux/utils';
+import { Spiner } from './spiner';
 
 interface TimeSelectionProps {
     info: CalendarState;
@@ -17,22 +18,33 @@ export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
     }
 
     render() {
-        const hideAmPm = this.props.info.timeSelection24Hours;
-        const hideTimeZone = !this.props.info.timeSelectionShowTimeZone;
-        const hideSeconds = !this.props.info.timeSelectionShowSeconds;
-        const displayDate = this.props.info.displayDate;
-
-        let screen = new MomentToSceen(displayDate, !hideAmPm);
-        const hour = screen.hour;
-        const min = screen.min;
-        const seconds = screen.seconds;
-
-        const amPm = AM_PM_VALUES[this.props.info.timeSelectionAmPmIndex];
-        const timeZone = TIME_ZONE_VALUES[this.props.info.timeSelectionTimeZoneIndex];
+        /*      const hideAmPm = this.props.info.timeSelection.mode24Hours;
+              const hideTimeZone = !this.props.info.timeSelection.showTimeZone;
+              const hideSeconds = !this.props.info.timeSelection.showSeconds;
+              const displayDate = this.props.info.displayDate;
+      
+              let screen = new MomentToSceen(displayDate, !hideAmPm);
+              const hour = screen.hour;
+              const min = screen.min;
+              const seconds = screen.seconds;
+      */
+        // const amPm = AM_PM_VALUES[this.props.info.timeSelectionAmPmIndex];
+        // const timeZone = TIME_ZONE_VALUES[this.props.info.timeSelectionTimeZoneIndex];
 
         return (
 
             <div className="timeSelectionZone">
+
+                <Spiner values={Hours24} onValueSelected={this.handleClick} userData="hour" />
+                <Spiner values={HoursAmPm} onValueSelected={this.handleClick} userData="hourAmPm" />
+                <div className="separator">:</div>
+                <Spiner values={MinutesSeconds} onValueSelected={this.handleClick} userData="min" />
+                <div className="separator">:</div>
+                <Spiner values={MinutesSeconds} onValueSelected={this.handleClick} userData="sec" />
+                <Spiner values={AM_PM_VALUES} onValueSelected={this.handleClick} userData="amPm" />
+                <Spiner values={TIME_ZONE_VALUES} onValueSelected={this.handleClick} userData="zones" />
+
+                {/*
                 <table>
                     <tbody>
                         <tr>
@@ -69,19 +81,12 @@ export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
                         </tr>
                     </tbody>
                 </table>
-
+*/}
             </div>
         );
     }
 
-    handleClick(evt: React.MouseEvent<HTMLTableCellElement>) {
-        let current = evt.currentTarget;
-        let classes = current.classList;
-        if (classes.length !== 2) {
-            return;
-        }
-        const partName = classes[0];
-        const directions = classes[1];
+    handleClick(key: string, partName: string) {
 
         function convert(value: string): TimePartNames {
 
@@ -97,39 +102,40 @@ export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
             if ('amPm' === partName) {
                 return TimePartNames.amPm;
             }
-            if ('timezone' === partName) {
+            if ('zones' === partName) {
                 return TimePartNames.timeZone;
             }
             return TimePartNames.hour;
         }
 
         let timePartName = convert(partName);
-        let up = directions === 'up';
+        let up = true;
         this.props.dispatcher.apply(new ChangeTimeDisplayed(timePartName, up));
-        console.log('click %s', classes);
+        console.log('click %s - %s', key, partName);
     }
-
-    private renderValue(value: string = '', hide: boolean = false) {
-        return hide ? false : (<td><span />{value}</td>);
-    }
-
-    private renderUp(name: string, hide: boolean = false) {
-        const css = name + ' up';
-        return hide ? false :
-            (
-                <td onClick={this.handleClick} className={css}>
-                    <span className="fa fa-plus" />
-                </td>
-            );
-    }
-
-    private renderDown(name: string, hide: boolean = false) {
-        const css = name + ' down';
-        return hide ? false :
-            (
-                <td onClick={this.handleClick} className={css}>
-                    <span className="fa fa-minus" />
-                </td>
-            );
-    }
+    /*
+        private renderValue(value: string = '', hide: boolean = false) {
+            return hide ? false : (<td><span />{value}</td>);
+        }
+    
+        private renderUp(name: string, hide: boolean = false) {
+            const css = name + ' up';
+            return hide ? false :
+                (
+                    <td onClick={this.handleClick} className={css}>
+                        <span className="fa fa-plus" />
+                    </td>
+                );
+        }
+    
+        private renderDown(name: string, hide: boolean = false) {
+            const css = name + ' down';
+            return hide ? false :
+                (
+                    <td onClick={this.handleClick} className={css}>
+                        <span className="fa fa-minus" />
+                    </td>
+                );
+        }
+        */
 }

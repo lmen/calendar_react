@@ -14,20 +14,21 @@ export class CalendarState {
     selectedDateByUser: Mom.Moment | null;
     yearStartLine: number;
 
-    timeSelection: {
-        mode24Hours: boolean;
-        showSeconds: boolean;
-        showTimeZone: boolean;
-
-        // selected by user
-        hourList: ValueList<number>
-        minuteList: ValueList<number>
-        secondList: ValueList<number>
-        amPmList: ValueList<string>
-        timeZoneIndex: ValueList<string>;
-
-    };
+    timeSelection: TimeSelectionState;
 
     config: Config;
 
+}
+
+export class TimeSelectionState {
+    mode24Hours: boolean;
+    showSeconds: boolean;
+    showTimeZone: boolean;
+
+    // selected by user
+    hourList: ValueList<number>;
+    minuteList: ValueList<number>;
+    secondList: ValueList<number>;
+    amPmList: ValueList<string>;
+    timeZoneIndex: ValueList<string>;
 }
