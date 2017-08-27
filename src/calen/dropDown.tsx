@@ -28,7 +28,7 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
                 </div>
                 <div className="selectionZone">
                     <DateSelection info={this.props.info} dispatcher={this.props.dispatcher} />
-                    <TimeSelection info={this.props.info} dispatcher={this.props.dispatcher} />
+                    <TimeSelection timeState={this.props.info.timeSelection} dispatcher={this.props.dispatcher} />
                 </div>
                 <div className="btnsToolbar">
                     <button onClick={this.handleOk}> Ok </button>

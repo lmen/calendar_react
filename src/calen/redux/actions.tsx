@@ -1,7 +1,6 @@
-import { CalendarState, VIEW, TimeSelectionState } from './state';
+import { CalendarState, VIEW, TimeSelectionState, Time } from './state';
 import {
-    ViewPort, TIME_ZONE_VALUES, ValueList, Hours24, HoursAmPm,
-    MinutesSeconds, AM_PM_VALUES, TimeUtils
+    ViewPort, TimeUtils
 } from './utils';
 import * as Mom from 'moment';
 import { Config } from '../calendar';
@@ -12,6 +11,24 @@ export interface Action {
 
 export interface InitialState {
     build(): CalendarState;
+}
+
+function convertMomToTime(mom: Mom.Moment, hasAmPm: boolean, withSeconds: boolean): Time {
+    let time = new Time();
+
+    time.hour = mom.hours();
+    if (hasAmPm) {
+        let p = new TimeUtils().toAMPmFormat(time.hour);
+        time.isAm = p.isAm;
+    }
+    time.min = mom.minutes();
+    if (withSeconds) {
+        time.sec = mom.seconds();
+    }
+
+    time.timeZone = 'LISBON'; // to be defined later
+
+    return time;
 }
 
 export class InitState implements InitialState {
@@ -33,25 +50,16 @@ export class InitState implements InitialState {
         oldState.displayDate = date.clone().date(1);
         oldState.selectedDateByUser = date;
 
-        oldState.timeSelection = new TimeSelectionState();
+        let timeSel = new TimeSelectionState();
         let mode24Hours = false;
-        oldState.timeSelection.mode24Hours = mode24Hours; // it should depend from the locale config
-        oldState.timeSelection.showSeconds = true;
-        oldState.timeSelection.showTimeZone = true;
+        timeSel.mode24Hours = mode24Hours; // it should depend from the locale config
+        timeSel.showSeconds = true;
+        timeSel.showTimeZone = true;
+        let time = convertMomToTime(date, !timeSel.mode24Hours, timeSel.showSeconds);
+        timeSel.timeDisplayed = time;
 
-        oldState.timeSelection.hourList = new ValueList<number>(mode24Hours ? Hours24 : HoursAmPm);
-        oldState.timeSelection.minuteList = new ValueList<number>(MinutesSeconds);
-        oldState.timeSelection.secondList = new ValueList<number>(MinutesSeconds);
-        oldState.timeSelection.amPmList = new ValueList<string>(AM_PM_VALUES);
-        oldState.timeSelection.timeZoneIndex = new ValueList<string>(TIME_ZONE_VALUES);
+        oldState.timeSelection = timeSel;
 
-        if (!mode24Hours) {
-            let p = new TimeUtils().toAMPmFormat(date.hours());
-            oldState.timeSelection.hourList.selectKey(p.hourAMPM);
-            oldState.timeSelection.amPmList.selectKey(p.isAm ? AM_PM_VALUES[0].key : AM_PM_VALUES[1].key);
-        }
-        oldState.timeSelection.minuteList.selectKey(date.minutes());
-        oldState.timeSelection.secondList.selectKey(date.seconds());
         return oldState;
     }
 }
@@ -246,48 +254,51 @@ export enum TimePartNames {
 
 export class ChangeTimeDisplayed implements Action {
 
-    constructor(private partName: TimePartNames, private up: boolean) { }
+    constructor(private partName: TimePartNames, private newValue: number | boolean | string) { }
 
     public reduce(state: CalendarState): CalendarState {
+
+        function createNewState(timeDisplayed: Time) {
+            let timeSelection: TimeSelectionState = { ...state.timeSelection, timeDisplayed };
+            return { ...state, timeSelection };
+        }
 
         if (!state.selectedDateByUser) {
             return state; // just for change
         }
 
-        let displayDate = state.displayDate.clone();
-
         let parteName = this.partName.toString();
         console.log(parteName);
 
-        if (this.partName === TimePartNames.hour) {
-            this.up ? displayDate.add(1, 'hour') : displayDate.subtract(1, 'hour');
+        let currentTimeDisplayed = state.timeSelection.timeDisplayed;
+        if (this.partName === TimePartNames.hour && typeof this.newValue === 'number') {
+            let hour = this.newValue;
+            let timeDisplayed: Time = { ...currentTimeDisplayed, hour };
+            return createNewState(timeDisplayed);
         }
-        if (this.partName === TimePartNames.minutes) {
-            this.up ? displayDate.add(1, 'minutes') : displayDate.subtract(1, 'minutes');
+        if (this.partName === TimePartNames.minutes && typeof this.newValue === 'number') {
+            let min = this.newValue;
+            let timeDisplayed: Time = { ...currentTimeDisplayed, min };
+            return createNewState(timeDisplayed);
         }
-        if (this.partName === TimePartNames.seconds) {
-            this.up ? displayDate.add(1, 'seconds') : displayDate.subtract(1, 'seconds');
+        if (this.partName === TimePartNames.seconds && typeof this.newValue === 'number') {
+            let sec = this.newValue;
+            let timeDisplayed: Time = { ...currentTimeDisplayed, sec };
+            return createNewState(timeDisplayed);
         }
-        /*
-                let timeSelectionAmPmIndex = state.timeSelectionAmPmIndex;
-                if (this.partName === TimePartNames.amPm) {
-                    const arraySize = 2;
-                    timeSelectionAmPmIndex = Math.abs((timeSelectionAmPmIndex + (this.up ? +1 : -1)) % arraySize);
-                    // needs to change on the moment.
-                }
-        
-                let timeSelectionTimeZoneIndex = state.timeSelectionTimeZoneIndex;
-                if (this.partName === TimePartNames.timeZone) {
-                    const arraySize = TIME_ZONE_VALUES.length;
-                    timeSelectionTimeZoneIndex = Math.abs((timeSelectionTimeZoneIndex + (this.up ? +1 : -1))
-                     % arraySize);
-                    // needs to change on the moment.
-                }
-        */
-        let selectedDateByUser = state.selectedDateByUser.clone();
-        selectedDateByUser.hour(displayDate.hour());
-        selectedDateByUser.minutes(displayDate.minutes());
 
-        return { ...state, displayDate, selectedDateByUser }; // , timeSelectionAmPmIndex, timeSelectionTimeZoneIndex };
+        if (this.partName === TimePartNames.amPm && typeof this.newValue === 'boolean') {
+            let isAm = this.newValue;
+            let timeDisplayed: Time = { ...currentTimeDisplayed, isAm };
+            return createNewState(timeDisplayed);
+        }
+
+        if (this.partName === TimePartNames.timeZone && typeof this.newValue === 'string') {
+            let timeZone = this.newValue;
+            let timeDisplayed: Time = { ...currentTimeDisplayed, timeZone };
+            return createNewState(timeDisplayed);
+        }
+
+        return state;
     }
 }
