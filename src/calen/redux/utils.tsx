@@ -1,4 +1,5 @@
 import * as Mom from 'moment';
+import { DateTime, Date, Time } from './state';
 
 export interface DayInfo {
     day: number;
@@ -16,16 +17,16 @@ export class MonthDays {
         return this.data;
     }
 
-    public fillMonthDays(displayDate: Mom.Moment) {
-        let info = { year: displayDate.year(), month: displayDate.month(), day: 1 }; // month is zero based
-        let firstDayOfDisplayMonth = Mom(info);
+    public fillMonthDays(displayDate: Date) {
+        let firstDayOfDisplayMonth = convertDateToMom(displayDate);
+        firstDayOfDisplayMonth.date(1); // Goto first day of month        
         firstDayOfDisplayMonth.locale(this.localeCode);
 
         let dayToDisplay = firstDayOfDisplayMonth.clone();
 
         let firstWeekDate = firstDayOfDisplayMonth.weekday();  //
         if (firstWeekDate > 0) {
-            dayToDisplay = Mom(info).subtract(firstWeekDate, 'd');
+            dayToDisplay.subtract(firstWeekDate, 'd');
         }
 
         for (let weekDay = 0; weekDay < 6; weekDay++) {
@@ -293,3 +294,127 @@ export class ValueList<K> {
     }
 
 }
+
+export function convertMomToDateTime(mom: Mom.Moment, hasAmPm: boolean, withSeconds: boolean): DateTime {
+    let dateTime = new DateTime();
+
+    dateTime.year = mom.year();
+    dateTime.month = mom.month() + 1;
+    dateTime.day = mom.date();
+
+    dateTime.hour = mom.hours();
+    if (hasAmPm) {
+        let p = new TimeUtils().toAMPmFormat(dateTime.hour);
+        dateTime.isAm = p.isAm;
+    }
+    dateTime.min = mom.minutes();
+    if (withSeconds) {
+        dateTime.sec = mom.seconds();
+    }
+
+    dateTime.timeZone = 'LISBON'; // to be defined later
+
+    return dateTime;
+}
+
+export function convertDateAndTimeToDateTime(date: Date, time: Time): DateTime {
+    let dateTime = new DateTime();
+
+    dateTime.year = date.year;
+    dateTime.month = date.month;
+    dateTime.day = date.day;
+
+    dateTime.hour = time.hour;
+    dateTime.isAm = time.isAm;
+    dateTime.min = time.min;
+    dateTime.sec = time.sec;
+    dateTime.timeZone = time.timeZone;
+
+    return dateTime;
+}
+
+export function convertDateTimeToMom(a: DateTime): Mom.Moment {
+
+    let date = Mom({
+        year: a.year,
+        month: a.month - 1,
+        day: a.day,
+        hour: a.isAm !== undefined ? new TimeUtils().to24Hours(a.hour, a.isAm) : a.hour,
+        minutes: a.min,
+        seconds: a.sec
+    });
+
+    return date;
+}
+
+export function convertDateTimeToDate(a: DateTime | null): Date | null {
+    if (!a) {
+        return null;
+    }
+    let date = new Date();
+    date.year = a.year;
+    date.month = a.month;
+    date.day = a.day;
+    return date;
+}
+
+export function convertDateTimeToTime(a: DateTime | null): Time | null {
+    if (!a) {
+        return null;
+    }
+
+    let date = new Time();
+    date.hour = a.hour;
+    date.min = a.min;
+    date.sec = a.sec;
+    date.isAm = a.isAm;
+    date.timeZone = a.timeZone;
+    return date;
+}
+
+export function convertDateToMom(a: Date): Mom.Moment {
+
+    let date = Mom({
+        year: a.year,
+        month: a.month - 1,
+        day: a.day,
+    });
+
+    return date;
+}
+
+export function convertMomToDate(mom: Mom.Moment): Date {
+    let date = new Date();
+
+    date.year = mom.year();
+    date.month = mom.month() + 1;
+    date.day = mom.date();
+
+    return date;
+}
+
+export function DateTimeToString(a: DateTime | null): string {
+    if (!a) {
+        return '';
+    }
+    let m = convertDateTimeToMom(a);
+
+    return m.format();
+}
+
+export function areDateTimeDifferent(a: DateTime | null, b: DateTime | null): boolean {
+    if (a !== null && b !== null) {
+        return !(a.year === b.year &&
+            a.month === b.month &&
+            a.day === b.day &&
+            a.hour === b.hour &&
+            a.isAm === b.isAm &&
+            a.min === b.min &&
+            a.sec === b.sec &&
+            a.timeZone === b.timeZone);
+    }
+    return b !== a;
+}
+
+export const ZERO_TIME = { hour: 0, min: 0, sec: 0, isAm: false, timeZone: undefined };
+export const ZERO_DATE = { year: 1920, month: 1, day: 1 };

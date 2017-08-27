@@ -19,15 +19,23 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
     }
 
     render() {
-        const selectDate = this.props.info.selectedDateByUser;
+        console.log('render calendar Drop Down');
+
+        const date = this.props.info.dateSelection.selectedDate;
+        const time = this.props.info.timeSelection.timeSelected;
+        let selectedDateTimeStr = !date ? 'Please select a date' : (
+            date.year + '-' + date.month + '-' + date.day);
+        if (time) {
+            selectedDateTimeStr += ' ' + time.hour + ':' + time.min + (time.sec ? ':' + time.sec : '');
+        }
         const css = `dropDown ${this.props.info.open ? 'show' : 'hide'}`;
         return (
             <div className={css}>
                 <div className="currentSelectedDateZone" title="Selected date">
-                    {!selectDate ? 'Please select a date' : selectDate.format('YYYY-MM-DD')}
+                    {selectedDateTimeStr}
                 </div>
                 <div className="selectionZone">
-                    <DateSelection info={this.props.info} dispatcher={this.props.dispatcher} />
+                    <DateSelection info={this.props.info.dateSelection} dispatcher={this.props.dispatcher} />
                     <TimeSelection timeState={this.props.info.timeSelection} dispatcher={this.props.dispatcher} />
                 </div>
                 <div className="btnsToolbar">

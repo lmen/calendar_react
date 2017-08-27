@@ -24,13 +24,13 @@ export class TimeSelection extends React.PureComponent<TimeSelectionProps> {
         const hideTimeZone = !info.showTimeZone;
         const hideSeconds = !info.showSeconds;
         const timeToDisplay = info.timeDisplayed;
+        console.log('time: hour: %s %s', timeToDisplay.hour, timeToDisplay.min);
 
         return (
 
             <div className="timeSelectionZone">
 
                 {
-
                     // hour
                 }
                 {hideAmPm ?

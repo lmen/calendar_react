@@ -2,7 +2,7 @@ import { CalendarState } from './state';
 import { Action, InitialState } from './actions';
 
 export interface CalendarStateSubscriber {
-    handleCalendarStateChange(newState: CalendarState): void;
+    handleCalendarStateChange(newState: CalendarState, oldState?: CalendarState): void;
 }
 
 export class Store {
@@ -18,11 +18,12 @@ export class Store {
 
     apply(action: Action) {
 
+        let oldState = this.currentState;
         let newState = action.reduce(this.currentState);
 
         this.currentState = newState;
 
-        this.subscriber.handleCalendarStateChange(newState);
+        this.subscriber.handleCalendarStateChange(newState, oldState);
     }
 
     getCurrentState(): CalendarState {

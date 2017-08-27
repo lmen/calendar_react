@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CalendarDDToolbar } from './toolbar';
-import { CalendarState } from './redux/state';
+import { DateSelectionState } from './redux/state';
 import { listToMatrix, localeListOfMonthsShort } from './redux/utils';
 import { Store } from './redux/dispatcher';
 import { MonthViewSelected, ShowDaysView, ShowYearsListView } from './redux/actions';
@@ -33,7 +33,7 @@ class Month extends React.PureComponent<Props> {
 }
 
 interface CMonthSelectProps {
-    info: CalendarState;
+    info: DateSelectionState;
     dispatcher: Store;
 }
 
@@ -52,13 +52,14 @@ export class CalendarMonthSelect extends React.PureComponent<CMonthSelectProps> 
 
     render() {
         console.log('Render MonthSelection');
-        const monthDesc = localeListOfMonthsShort(this.props.info.config.locale_code);
+        const localeCode = this.props.info.localeCode;
+        const monthDesc = localeListOfMonthsShort(localeCode);
         const monthMatrix = listToMatrix(monthDesc, 4);
         return (
             <div className="view">
 
                 <CalendarDDToolbar
-                    localeCode={this.props.info.config.locale_code}
+                    localeCode={localeCode}
                     showBtns={false}
                     displayDate={this.props.info.displayDate}
                     onBack={this.handleGoBack}
@@ -104,7 +105,7 @@ export class CalendarMonthSelect extends React.PureComponent<CMonthSelectProps> 
     }
 
     private isToSelectedMonth(month: number): boolean {
-        let monthSel = this.props.info.selectedDateByUser ? this.props.info.selectedDateByUser.month() : -1;
+        let monthSel = this.props.info.selectedDate ? this.props.info.selectedDate.month - 1 : -1;
         return monthSel === month;
     }
 }

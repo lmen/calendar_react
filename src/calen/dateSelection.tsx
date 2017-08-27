@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { CalendarState, VIEW } from './redux/state';
+import { VIEW, DateSelectionState } from './redux/state';
 import { CalendarDays } from './daySelection';
 import { CalendarMonthSelect } from './monthSelection';
 import { CalendarYearSelect } from './yearSelection';
 import { Store } from './redux/dispatcher';
 
 interface DateSelectionProps {
-    info: CalendarState;
+    info: DateSelectionState;
     dispatcher: Store;
 }
 
@@ -22,9 +22,9 @@ export class DateSelection extends React.PureComponent<DateSelectionProps> {
             <div className="dateSelection">
                 {view === VIEW.DAY
                     ? < CalendarDays
-                        localeCode={this.props.info.config.locale_code}
+                        localeCode={this.props.info.localeCode}
                         displayDate={this.props.info.displayDate}
-                        selectedDate={this.props.info.selectedDateByUser}
+                        selectedDate={this.props.info.selectedDate}
                         dispatcher={this.props.dispatcher}
                     />
                     : (view === VIEW.MONTH_LIST

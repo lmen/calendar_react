@@ -1,6 +1,7 @@
-import { CalendarState, VIEW, TimeSelectionState, Time } from './state';
+import { CalendarState, VIEW, TimeSelectionState, Time, DateSelectionState, Date, DateTime } from './state';
 import {
-    ViewPort, TimeUtils
+    ViewPort, convertMomToDateTime, convertDateToMom, convertMomToDate,
+    convertDateTimeToDate, convertDateTimeToTime, convertDateAndTimeToDateTime, ZERO_TIME, ZERO_DATE
 } from './utils';
 import * as Mom from 'moment';
 import { Config } from '../calendar';
@@ -13,72 +14,96 @@ export interface InitialState {
     build(): CalendarState;
 }
 
-function convertMomToTime(mom: Mom.Moment, hasAmPm: boolean, withSeconds: boolean): Time {
-    let time = new Time();
-
-    time.hour = mom.hours();
-    if (hasAmPm) {
-        let p = new TimeUtils().toAMPmFormat(time.hour);
-        time.isAm = p.isAm;
-    }
-    time.min = mom.minutes();
-    if (withSeconds) {
-        time.sec = mom.seconds();
-    }
-
-    time.timeZone = 'LISBON'; // to be defined later
-
-    return time;
-}
+const DefaultConfig: Config = {
+    locale_code: 'en',
+    showSeconds: false,
+    showTimeZone: false,
+    showAmPm: false
+};
 
 export class InitState implements InitialState {
 
-    constructor(private currentDate: Mom.Moment, private config: Config) {
-
+    constructor(
+        private initiallySelected: Mom.Moment | null,
+        private defaultDisplayDate: Mom.Moment,
+        private config: Config) {
     }
 
     build(): CalendarState {
-        let oldState = new CalendarState();
 
-        oldState.config = Object.assign({}, this.config || { locale_code: 'en' });
-        oldState.open = false;
-        oldState.currentView = VIEW.DAY;
-        oldState.userEndSelection = false;
+        // handle configuration with default values
+        let config = Object.assign({}, DefaultConfig);
+        if (this.config) {
+            config = Object.assign(config, this.config);
+        }
 
-        oldState.currentDate = this.currentDate ? this.currentDate.clone() : null;
-        let date = this.currentDate || Mom.now();
-        oldState.displayDate = date.clone().date(1);
-        oldState.selectedDateByUser = date;
+        let selectedDateTime = this.initiallySelected ? convertMomToDateTime(
+            this.initiallySelected,
+            config.showAmPm as boolean,
+            config.showSeconds as boolean) : null;
 
+        let displayDateTime = selectedDateTime || convertMomToDateTime(
+            this.defaultDisplayDate,
+            config.showAmPm as boolean,
+            config.showSeconds as boolean);
+
+        // date selection
+        let dateSel = new DateSelectionState();
+        dateSel.currentView = VIEW.DAY;
+        dateSel.displayDate = convertDateTimeToDate(displayDateTime) as Date;
+        dateSel.selectedDate = convertDateTimeToDate(selectedDateTime);
+        dateSel.yearStartLine = 0;
+
+        // time selection        
         let timeSel = new TimeSelectionState();
-        let mode24Hours = false;
-        timeSel.mode24Hours = mode24Hours; // it should depend from the locale config
-        timeSel.showSeconds = true;
-        timeSel.showTimeZone = true;
-        let time = convertMomToTime(date, !timeSel.mode24Hours, timeSel.showSeconds);
-        timeSel.timeDisplayed = time;
+        timeSel.mode24Hours = !config.showAmPm as boolean;
+        timeSel.showSeconds = config.showSeconds as boolean;
+        timeSel.showTimeZone = config.showTimeZone as boolean;
+        // let time = convertMomToTime(date, !timeSel.mode24Hours, timeSel.showSeconds);
+        timeSel.timeDisplayed = convertDateTimeToTime(displayDateTime) as Time;
+        timeSel.timeSelected = convertDateTimeToTime(selectedDateTime);
 
+        let oldState = new CalendarState();
+        oldState.currentDateTime = selectedDateTime;
+        oldState.config = config;
+        oldState.open = false;
+        oldState.userEndSelection = false;
+        oldState.dateSelection = dateSel;
         oldState.timeSelection = timeSel;
 
         return oldState;
     }
 }
 
+function cloneStateWith(state: CalendarState, dateSelection: DateSelectionState) {
+    return { ...state, dateSelection };
+}
+
 export class DayViewGotoPrevMonth implements Action {
 
     public reduce(state: CalendarState): CalendarState {
-        let newDisplayDate = state.displayDate.clone().subtract(1, 'M');
+        // It can change not only the moth but also the year
+        let newDisplayDate = convertDateToMom(state.dateSelection.displayDate).subtract(1, 'M');
 
-        return { ...state, displayDate: newDisplayDate };
+        let displayDate = convertMomToDate(newDisplayDate);
+
+        let dateSelection = { ...state.dateSelection, displayDate };
+
+        return cloneStateWith(state, dateSelection);
     }
 }
 
 export class DayViewGotoNextMonth implements Action {
 
     public reduce(state: CalendarState): CalendarState {
-        let newDisplayDate = state.displayDate.clone().add(1, 'M');
 
-        return { ...state, displayDate: newDisplayDate };
+        let newDisplayDate = convertDateToMom(state.dateSelection.displayDate).add(1, 'M');
+
+        let displayDate = convertMomToDate(newDisplayDate);
+
+        let dateSelection = { ...state.dateSelection, displayDate };
+
+        return cloneStateWith(state, dateSelection);
     }
 
 }
@@ -86,24 +111,28 @@ export class DayViewGotoNextMonth implements Action {
 export class YearViewPortMoveUp implements Action {
 
     public reduce(state: CalendarState): CalendarState {
-        let vp = new ViewPort(state.yearStartLine);
+        let vp = new ViewPort(state.dateSelection.yearStartLine);
         vp.moveup();
 
         let yearStartLine = vp.getStartLine();
 
-        return { ...state, yearStartLine };
+        let dateSelection = { ...state.dateSelection, yearStartLine };
+
+        return cloneStateWith(state, dateSelection);
     }
 }
 
 export class YearViewPortMoveDown implements Action {
 
     public reduce(state: CalendarState): CalendarState {
-        let vp = new ViewPort(state.yearStartLine);
+        let vp = new ViewPort(state.dateSelection.yearStartLine);
         vp.moveDown();
 
         let yearStartLine = vp.getStartLine();
 
-        return { ...state, yearStartLine };
+        let dateSelection = { ...state.dateSelection, yearStartLine };
+
+        return cloneStateWith(state, dateSelection);
     }
 }
 
@@ -115,16 +144,18 @@ export class YearViewSelected implements Action {
 
     public reduce(state: CalendarState): CalendarState {
 
-        const newDisplayDate = state.displayDate.clone().year(this.newYear);
+        const newDisplayDate = convertDateToMom(state.dateSelection.displayDate).year(this.newYear);
         if (!newDisplayDate.isValid()) {
             console.log('invalid date: %s', this.newYear);
             return state;
         }
 
         let currentView = VIEW.DAY;
-        let displayDate = newDisplayDate;
+        let displayDate = convertMomToDate(newDisplayDate);
 
-        return { ...state, currentView, displayDate };
+        let dateSelection = { ...state.dateSelection, currentView, displayDate };
+
+        return cloneStateWith(state, dateSelection);
     }
 }
 
@@ -137,15 +168,17 @@ export class MonthViewSelected implements Action {
     public reduce(state: CalendarState): CalendarState {
         console.log('>> %s', this.newMonth);
 
-        const newDisplayDate = state.displayDate.clone().month(this.newMonth);
+        const newDisplayDate = convertDateToMom(state.dateSelection.displayDate).month(this.newMonth);
         if (!newDisplayDate.isValid()) {
             return state;
         }
 
         let currentView = VIEW.DAY;
-        let displayDate = newDisplayDate;
+        let displayDate = convertMomToDate(newDisplayDate);
 
-        return { ...state, currentView, displayDate };
+        let dateSelection = { ...state.dateSelection, currentView, displayDate };
+
+        return cloneStateWith(state, dateSelection);
     }
 }
 
@@ -159,12 +192,16 @@ export class DayViewSelected implements Action {
 
         console.log('>> %s', this.day);
 
-        const newDisplayDate = state.displayDate.clone().date(this.day);
+        const newDisplayDate = convertDateToMom(state.dateSelection.displayDate).date(this.day);
         if (!newDisplayDate.isValid()) {
             return state;
         }
 
-        return { ...state, selectedDateByUser: newDisplayDate };
+        const selectedDate = convertMomToDate(newDisplayDate);
+
+        let dateSelection = { ...state.dateSelection, selectedDate };
+
+        return cloneStateWith(state, dateSelection);
     }
 }
 
@@ -174,7 +211,10 @@ export class ShowDaysView implements Action {
 
         let currentView = VIEW.DAY;
 
-        return { ...state, currentView };
+        let dateSelection = { ...state.dateSelection, currentView };
+
+        return cloneStateWith(state, dateSelection);
+
     }
 }
 
@@ -183,7 +223,9 @@ export class ShowMonthsListView implements Action {
     public reduce(state: CalendarState): CalendarState {
         let currentView = VIEW.MONTH_LIST;
 
-        return { ...state, currentView };
+        let dateSelection = { ...state.dateSelection, currentView };
+
+        return cloneStateWith(state, dateSelection);
     }
 }
 
@@ -193,25 +235,54 @@ export class ShowYearsListView implements Action {
 
         let currentView = VIEW.YEAR_LIST;
 
-        let vp = new ViewPort(state.yearStartLine);
-        vp.showYear(state.displayDate.year()); // TODO
+        let vp = new ViewPort(state.dateSelection.yearStartLine);
+        vp.showYear(state.dateSelection.displayDate.year);
         let yearStartLine = vp.getStartLine();
 
-        return { ...state, currentView, yearStartLine };
+        let dateSelection = { ...state.dateSelection, currentView, yearStartLine };
+
+        return cloneStateWith(state, dateSelection);
     }
 }
 
 export class DataChanged implements Action {
 
-    constructor(private date: Mom.Moment) { }
+    constructor(private date: Mom.Moment | null) {
+        console.log('see later' + this.date);
+    }
 
     public reduce(state: CalendarState): CalendarState {
 
-        let currentDate = this.date.clone();
-        let selectedDateByUser = this.date.clone();
-        let displayDate = this.date.clone().date(1);
+        let currentDateTime: DateTime | null = null;
 
-        return { ...state, selectedDateByUser, displayDate, currentDate };
+        let selectedDate: Date | null = null;
+        let displayDate: Date = ZERO_DATE;
+        let timeSelected: Time | null = null;
+        let timeDisplayed: Time = ZERO_TIME;
+
+        if (this.date) {
+            currentDateTime = convertMomToDateTime(
+                this.date,
+                !state.timeSelection.mode24Hours,
+                state.timeSelection.showSeconds);
+
+            let b = convertDateTimeToDate(currentDateTime);
+            displayDate = b ? b : ZERO_DATE;
+            selectedDate = convertDateTimeToDate(currentDateTime);
+
+            timeSelected = convertDateTimeToTime(currentDateTime);
+
+            let a = convertDateTimeToTime(currentDateTime);
+            timeDisplayed = a ? a : ZERO_TIME;
+        }
+
+        let dateSelection = { ...state.dateSelection, selectedDate, displayDate };
+        let timeSelection = { ...state.timeSelection, timeSelected, timeDisplayed };
+
+        let result = cloneStateWith(state, dateSelection);
+        result.currentDateTime = currentDateTime;
+        result.timeSelection = timeSelection;
+        return result;
     }
 }
 
@@ -230,11 +301,18 @@ export class CloseDropDownUserAcceptSelection implements Action {
 
     public reduce(state: CalendarState): CalendarState {
 
+        let dateSel = state.dateSelection.selectedDate;
+        let timeSel = state.timeSelection.timeSelected;
+
+        if (!dateSel || !timeSel) {
+            return state;
+        }
+
         let open = false;
         let userEndSelection = true;
-        let currentDate = state.selectedDateByUser;
+        let currentDateTime = convertDateAndTimeToDateTime(dateSel, timeSel);
 
-        return { ...state, open, userEndSelection, currentDate };
+        return { ...state, open, userEndSelection, currentDateTime };
     }
 }
 
@@ -259,12 +337,9 @@ export class ChangeTimeDisplayed implements Action {
     public reduce(state: CalendarState): CalendarState {
 
         function createNewState(timeDisplayed: Time) {
-            let timeSelection: TimeSelectionState = { ...state.timeSelection, timeDisplayed };
+            let timeSelected = { ...timeDisplayed }; // in case the selection is the same as the time selection
+            let timeSelection: TimeSelectionState = { ...state.timeSelection, timeDisplayed, timeSelected };
             return { ...state, timeSelection };
-        }
-
-        if (!state.selectedDateByUser) {
-            return state; // just for change
         }
 
         let parteName = this.partName.toString();

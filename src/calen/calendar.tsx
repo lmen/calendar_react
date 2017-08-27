@@ -4,13 +4,17 @@ import { CalendarDropDown } from './dropDown';
 import { CalendarState } from './redux/state';
 import { CalendarStateSubscriber, Store, } from './redux/dispatcher';
 import { DataChanged, OpenDropDown, InitState, CloseDropDownUserReectSelection } from './redux/actions';
+import { DateTimeToString, convertDateTimeToMom, areDateTimeDifferent } from './redux/utils';
 
 export interface Config {
     locale_code: string;
+    showSeconds?: boolean;
+    showTimeZone?: boolean;
+    showAmPm?: boolean;
 }
 
 interface CProps {
-    date: Mon.Moment;
+    date: Mon.Moment | null;
     config: Config;
     onDateChange: (newDate: Mon.Moment | null) => void;
 }
@@ -22,9 +26,10 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
     constructor(props: CProps) {
         super(props);
 
-        let currDate = this.props.date;
+        let initUserDate = this.props.date;
+        let displayDate = initUserDate || Mon();
 
-        this.dispatcher = new Store(new InitState(currDate, props.config), this);
+        this.dispatcher = new Store(new InitState(initUserDate, displayDate, props.config), this);
 
         this.state = this.dispatcher.getCurrentState();
 
@@ -32,11 +37,6 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
         this.handleChangeInInput = this.handleChangeInInput.bind(this);
         this.handleClickOutsideCalendarArea = this.handleClickOutsideCalendarArea.bind(this);
         this.handleClickInCalendarArea = this.handleClickInCalendarArea.bind(this);
-
-        console.log(
-            'Calender componentDidMount initial state: sel: %s display: %s',
-            this.state.selectedDateByUser,
-            this.state.displayDate);
     }
 
     componentDidMount() {
@@ -48,7 +48,7 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
     }
 
     componentWillReceiveProps(nextProps: CProps) {
-        if (this.props.date && !this.props.date.isSame(nextProps.date)) {
+        if (this.props.date && !this.props.date.isSame(nextProps.date as Mon.Moment)) {
             console.log('Calendar componentWillReceiveProps ' + nextProps.date);
             this.dispatcher.apply(new DataChanged(nextProps.date));
         }
@@ -56,8 +56,8 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
 
     render() {
         console.log('Calendar render state:%s props: %s', Object.keys(this.state), Object.keys(this.props));
-        const currentDate = this.state.currentDate;
-        const currentDateStr = currentDate ? currentDate.format() : '';
+        const currentDate = this.state.currentDateTime;
+        const currentDateStr = DateTimeToString(currentDate);
         return (
             <div className="lmen-calendar" onClick={this.handleClickInCalendarArea}>
                 <input
@@ -73,8 +73,8 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
     handleClickOutsideCalendarArea(evt: MouseEvent) {
         // tslint:disable-next-line:no-any
         let av = evt as any;
-        console.log('handleClickOutsideCalendarArea %s', av.calendarStamp !== undefined);
         if (this.state.open && av.calendarStamp !== this) {
+            console.log('handleClickOutsideCalendarArea closing %s', av.calendarStamp !== undefined);
             this.dispatcher.apply(new CloseDropDownUserReectSelection());
         }
     }
@@ -97,36 +97,32 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
         console.log('calendar click');
     }
 
-    handleCalendarStateChange(newState: CalendarState): void {
-        let beforeDate = this.dispatcher.getCurrentState().selectedDateByUser;
+    handleCalendarStateChange(newState: CalendarState, oldState: CalendarState): void {
+
+        let beforeDate = oldState.currentDateTime;
 
         this.setState(
             (prevState, props) => {
-                console.log(
-                    'handle dispatcher change: ' +
-                    'newState.selDate: %s newState.displayDate: %s' +
-                    'prevState.selDate: %s prevState.displayDate: %s',
-                    'userEndSelection: %s ',
-                    newState.selectedDateByUser, newState.displayDate,
-                    prevState.selectedDateByUser, prevState.displayDate,
-                    newState.userEndSelection);
                 return newState;
             },
             () => {
-                let newDate = newState.selectedDateByUser;
-                if (newState.userEndSelection && areMomentsDifferent(beforeDate, newDate)) {
+                let newDate = newState.currentDateTime;
+                console.log(
+                    'hjkh %s %s %s',
+                    newDate ? newDate.day : 'null',
+                    beforeDate ? beforeDate.day : 'null',
+                    newState.userEndSelection
+                );
 
-                    this.props.onDateChange(newDate);
+                if (newState.userEndSelection && areDateTimeDifferent(beforeDate, newDate)) {
+                    let datetime = newDate ? convertDateTimeToMom(newDate) : null;
+                    console.log('dateTime %s', datetime);
+
+                    this.props.onDateChange(datetime);
                 }
             }
         );
+
     }
 
-}
-
-function areMomentsDifferent(a: Mon.Moment | null, b: Mon.Moment | null): boolean {
-    if (a !== null && b !== null) {
-        return a.isSame(b);
-    }
-    return b !== a;
 }

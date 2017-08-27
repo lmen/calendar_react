@@ -1,7 +1,8 @@
 import * as React from 'react';
-import * as Mon from 'moment';
+// import * as Mon from 'moment';
 import { MonthDays, localeListOfWeekDaysShort } from './redux/utils';
 import { CalendarDDToolbar } from './toolbar';
+import { Date } from './redux/state';
 import { Store } from './redux/dispatcher';
 import {
     DayViewSelected, DayViewGotoPrevMonth,
@@ -38,17 +39,6 @@ export class Day extends React.PureComponent<Props> {
         }
     }
 
-    shouldComponentUpdate(nextProps: Props, nestState: {}, nextContext: {}): boolean {
-        let res = !(nextProps.day === this.props.day && nextProps.sel === this.props.sel);
-        console.log(
-            'CalendatDropDownDay shouldComponentUpdate=%s: %s == %s, %s == %s',
-            res,
-            nextProps.sel, this.props.sel,
-            nextProps.day, this.props.day);
-
-        return res;
-    }
-
     render() {
         console.log('CalendarDropDownDay render day: %s props sel: %s', this.props.day, this.props.sel);
         return (
@@ -66,8 +56,8 @@ export class Day extends React.PureComponent<Props> {
 // =============================
 
 interface PropsDays {
-    displayDate: Mon.Moment;
-    selectedDate: Mon.Moment | null;
+    displayDate: Date;
+    selectedDate: Date | null;
     localeCode: string;
     dispatcher: Store;
 }
@@ -153,19 +143,19 @@ export class CalendarDays extends React.PureComponent<PropsDays> {
         this.dispatcher.apply(new ShowYearsListView());
     }
 
-    private calculateSelDay(displayDate: Mon.Moment, selectedDateByUser: Mon.Moment | null) {
+    private calculateSelDay(displayDate: Date, selectedDateByUser: Date | null) {
         if (!selectedDateByUser) {
             return -1;
         }
 
         let selDay = -1, selyear = -1, selmonth = -1;
-        selyear = selectedDateByUser.year();
-        selmonth = selectedDateByUser.month();
+        selyear = selectedDateByUser.year;
+        selmonth = selectedDateByUser.month;
 
-        if (!(selmonth === displayDate.month() && selyear === displayDate.year())) {
+        if (!(selmonth === displayDate.month && selyear === displayDate.year)) {
             return -1;
         }
-        selDay = selectedDateByUser.date();
+        selDay = selectedDateByUser.day;
 
         return selDay;
     }

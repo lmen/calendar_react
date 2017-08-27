@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CalendarDDToolbar } from './toolbar';
-import { CalendarState } from './redux/state';
+import { DateSelectionState } from './redux/state';
 import { Store } from './redux/dispatcher';
 import {
     YearViewPortMoveDown, YearViewPortMoveUp,
@@ -42,7 +42,7 @@ export class Year extends React.PureComponent<Props> {
 }
 
 interface CYearSelectProps {
-    info: CalendarState;
+    info: DateSelectionState;
     dispatcher: Store;
 }
 
@@ -63,12 +63,12 @@ export class CalendarYearSelect extends React.PureComponent<CYearSelectProps> {
 
     render() {
         console.log('render CalendarYearSelect');
-        let vp = new ViewPort(this.dispatcher.getCurrentState().yearStartLine);
+        let vp = new ViewPort(this.props.info.yearStartLine);
         let yearsMat = vp.content();
         return (
             <div className="view">
                 <CalendarDDToolbar
-                    localeCode={this.props.info.config.locale_code}
+                    localeCode={this.props.info.localeCode}
                     showBtns={true}
                     displayDate={this.props.info.displayDate}
                     onNext={this.handleScrollDown}
@@ -121,7 +121,7 @@ export class CalendarYearSelect extends React.PureComponent<CYearSelectProps> {
     }
 
     private isSelectedYear(year: number) {
-        let yearSel = this.props.info.selectedDateByUser ? this.props.info.selectedDateByUser.year() : -1;
+        let yearSel = this.props.info.selectedDate ? this.props.info.selectedDate.year : -1;
         return year === yearSel;
     }
 

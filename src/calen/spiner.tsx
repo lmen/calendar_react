@@ -25,8 +25,10 @@ export class Spiner<K, U> extends React.PureComponent<SpinerProps<K, U>, SpinerS
     }
 
     render() {
+
         let ctrl = new SpinerCtrl(this.state);
         let label = ctrl.getLabelFromSelected();
+        console.log('spinner render: %s %s', this.state.currentIndex, label);
         return (
             <table>
                 <tbody>
@@ -117,7 +119,8 @@ class SpinerCtrl<K> {
     }
 
     selectKey(key: K): void {
-        this.state.values.find((v) => v.key === key);
+        let index = Math.max(this.state.values.findIndex((v) => v.key === key), 0);
+        this.state.currentIndex = index;
     }
 
     moveUp(): void {
