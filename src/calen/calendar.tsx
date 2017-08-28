@@ -61,10 +61,12 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
         return (
             <div className="lmen-calendar" onClick={this.handleClickInCalendarArea}>
                 <input
+                    readOnly={true}
                     value={currentDateStr}
                     onClick={this.handleClickInInput}
                     onChange={this.handleChangeInInput}
                 />
+                <span className="fa fa-calendar" onClick={this.handleClickInInput} />
                 {this.state.open ? <CalendarDropDown info={this.state} dispatcher={this.dispatcher} /> : false}
             </div>
         );

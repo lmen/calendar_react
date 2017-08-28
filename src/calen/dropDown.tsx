@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CalendarState } from './redux/state';
 import { Store } from './redux/dispatcher';
-import { CloseDropDownUserAcceptSelection, CloseDropDownUserReectSelection } from './redux/actions';
+import { CloseDropDownUserAcceptSelection, CloseDropDownUserReectSelection, ClearUserSelection } from './redux/actions';
 import { DateSelection } from './dateSelection';
 import { TimeSelection } from './timeSelection';
 
@@ -16,6 +16,7 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
         super(props);
         this.handleCancel = this.handleCancel.bind(this);
         this.handleOk = this.handleOk.bind(this);
+        this.handleClear = this.handleClear.bind(this);
     }
 
     render() {
@@ -41,6 +42,7 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
                 <div className="btnsToolbar">
                     <button onClick={this.handleOk}> Ok </button>
                     <button onClick={this.handleCancel}> Cancel </button>
+                    <button onClick={this.handleClear}> Clear </button>
                 </div>
             </div>
         );
@@ -52,6 +54,10 @@ export class CalendarDropDown extends React.PureComponent<CDDownProps> {
 
     handleCancel() {
         this.props.dispatcher.apply(new CloseDropDownUserReectSelection());
+    }
+
+    public handleClear(): void {
+        this.props.dispatcher.apply(new ClearUserSelection());
     }
 
 }

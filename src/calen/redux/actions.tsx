@@ -316,6 +316,21 @@ export class CloseDropDownUserAcceptSelection implements Action {
     }
 }
 
+export class ClearUserSelection implements Action {
+
+    public reduce(state: CalendarState): CalendarState {
+
+        let selectedDate = null;
+        let dateSelection = { ...state.dateSelection, selectedDate };
+
+        let timeSelected = null;
+        let timeSelection = { ...state.timeSelection, timeSelected };
+
+        return { ...state, dateSelection, timeSelection };
+    }
+
+}
+
 export class CloseDropDownUserReectSelection implements Action {
 
     public reduce(state: CalendarState): CalendarState {
