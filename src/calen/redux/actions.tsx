@@ -17,7 +17,7 @@ export interface InitialState {
 const DefaultConfig: Config = {
     locale_code: 'en',
     showSeconds: false,
-    showTimeZone: false,
+    showTimeZone: true,
     showAmPm: false
 };
 

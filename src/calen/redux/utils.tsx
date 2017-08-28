@@ -1,4 +1,5 @@
 import * as Mom from 'moment';
+import * as MomTz from 'moment-timezone';
 import { DateTime, Date, Time } from './state';
 
 export interface DayInfo {
@@ -252,12 +253,17 @@ export const AM_PM_VALUES: Value<string>[] = [
     { key: 'am', label: 'AM' },
     { key: 'pm', label: 'PM' }
 ];
-export const TIME_ZONE_VALUES: Value<string>[] = [
+
+export const TIME_ZONE_VALUES: Value<string>[] =
+    MomTz.tz.names().map((c) => {
+        return { key: c, label: c };
+    });
+/*export const TIME_ZONE_VALUES: Value<string>[] = [
     { key: 'LISBON', label: 'LISBON' },
     { key: 'MADRID', label: 'MADRID' },
     { key: 'ROME', label: 'ROME' },
     { key: 'PARIS', label: 'PARIS' }
-];
+];*/
 
 export class Value<K> {
     key: K;
