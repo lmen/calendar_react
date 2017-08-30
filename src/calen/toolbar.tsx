@@ -1,7 +1,7 @@
 import * as React from 'react';
 // import * as Mom from 'moment';
 import { localeListOfMonths } from './redux/utils';
-import { Date } from './redux/state';
+import { Date } from './redux/dateTime';
 
 export class CalendarDDToolbar extends React.Component<{
     showBtns: boolean;

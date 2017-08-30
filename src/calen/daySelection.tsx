@@ -2,7 +2,7 @@ import * as React from 'react';
 // import * as Mon from 'moment';
 import { MonthDays, localeListOfWeekDaysShort } from './redux/utils';
 import { CalendarDDToolbar } from './toolbar';
-import { Date } from './redux/state';
+import { Date } from './redux/dateTime';
 import { Store } from './redux/dispatcher';
 import {
     DayViewSelected, DayViewGotoPrevMonth,

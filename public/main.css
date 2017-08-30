@@ -2329,6 +2329,7 @@
   clip: auto; }
 
 .lmen-calendar {
+  background-color: white;
   position: relative; }
   .lmen-calendar input {
     width: 170px;
@@ -2336,6 +2337,7 @@
   .lmen-calendar .inline-link {
     cursor: pointer; }
   .lmen-calendar .dropDown {
+    background-color: white;
     position: absolute;
     width: 250px;
     box-shadow: 10px 10px 5px #888888;

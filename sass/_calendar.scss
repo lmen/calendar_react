@@ -1,5 +1,6 @@
 $dropDown-width: 250px;
 .lmen-calendar {
+    background-color: white;
     position: relative;
     input {
         width: 170px;
@@ -9,6 +10,7 @@ $dropDown-width: 250px;
         cursor: pointer;
     }
     .dropDown {
+        background-color: white;
         position: absolute;
         width: $dropDown-width;
         box-shadow: 10px 10px 5px #888888;
@@ -127,7 +129,7 @@ $dropDown-width: 250px;
             flex-wrap: nowrap; // wrap means the flex-items will go to the next line
             // flex-flow : combines the flex-direction and flex-wrap
             align-items: center; // tells where to place the items in the cross axis
-            justify-content: center; // main-axis : tells how the items are placed on the main axis 
+            justify-content: center; // main-axis : tells how the items are placed on the main axis
             margin: 5px;
             button {
                 // this are the flex-items

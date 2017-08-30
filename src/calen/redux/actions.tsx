@@ -1,8 +1,10 @@
-import { CalendarState, VIEW, TimeSelectionState, Time, DateSelectionState, Date, DateTime } from './state';
+import { CalendarState, VIEW, TimeSelectionState, DateSelectionState } from './state';
+import { ViewPort } from './utils';
 import {
-    ViewPort, convertMomToDateTime, convertDateToMom, convertMomToDate,
-    convertDateTimeToDate, convertDateTimeToTime, convertDateAndTimeToDateTime, ZERO_TIME, ZERO_DATE
-} from './utils';
+    convertMomToDateTime, convertDateToMom, convertMomToDate,
+    convertDateTimeToDate, convertDateTimeToTime, convertDateAndTimeToDateTime, ZERO_TIME, ZERO_DATE,
+    Date, DateTime, Time
+} from './dateTime';
 import * as Mom from 'moment';
 import { Config } from '../calendar';
 
@@ -14,38 +16,22 @@ export interface InitialState {
     build(): CalendarState;
 }
 
-const DefaultConfig: Config = {
-    locale_code: 'en',
-    showSeconds: false,
-    showTimeZone: true,
-    showAmPm: false
-};
-
 export class InitState implements InitialState {
 
     constructor(
-        private initiallySelected: Mom.Moment | null,
-        private defaultDisplayDate: Mom.Moment,
+        private initiallySelected: DateTime | null,
+        private defaultDisplayDate: DateTime,
         private config: Config) {
     }
 
     build(): CalendarState {
 
         // handle configuration with default values
-        let config = Object.assign({}, DefaultConfig);
-        if (this.config) {
-            config = Object.assign(config, this.config);
-        }
+        let config = this.config;
 
-        let selectedDateTime = this.initiallySelected ? convertMomToDateTime(
-            this.initiallySelected,
-            config.showAmPm as boolean,
-            config.showSeconds as boolean) : null;
+        let selectedDateTime = this.initiallySelected ? this.initiallySelected : null;
 
-        let displayDateTime = selectedDateTime || convertMomToDateTime(
-            this.defaultDisplayDate,
-            config.showAmPm as boolean,
-            config.showSeconds as boolean);
+        let displayDateTime = selectedDateTime || this.defaultDisplayDate;
 
         // date selection
         let dateSel = new DateSelectionState();
@@ -54,7 +40,7 @@ export class InitState implements InitialState {
         dateSel.selectedDate = convertDateTimeToDate(selectedDateTime);
         dateSel.yearStartLine = 0;
 
-        // time selection        
+        // time selection
         let timeSel = new TimeSelectionState();
         timeSel.mode24Hours = !config.showAmPm as boolean;
         timeSel.showSeconds = config.showSeconds as boolean;

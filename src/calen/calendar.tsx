@@ -4,7 +4,11 @@ import { CalendarDropDown } from './dropDown';
 import { CalendarState } from './redux/state';
 import { CalendarStateSubscriber, Store, } from './redux/dispatcher';
 import { DataChanged, OpenDropDown, InitState, CloseDropDownUserReectSelection } from './redux/actions';
-import { DateTimeToString, convertDateTimeToMom, areDateTimeDifferent } from './redux/utils';
+import {
+    DateTimeToString, convertDateTimeToMom, areDateTimeDifferent,
+    convertMomToDateTime, DateTime
+} from './redux/dateTime';
+import { createFinalConfig } from './redux/config';
 
 export interface Config {
     locale_code: string;
@@ -26,10 +30,14 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
     constructor(props: CProps) {
         super(props);
 
-        let initUserDate = this.props.date;
-        let displayDate = initUserDate || Mon();
+        let finalConfig = createFinalConfig(props.config);
+        let showAm = finalConfig.showAmPm as boolean;
+        let showSec = finalConfig.showSeconds as boolean;
 
-        this.dispatcher = new Store(new InitState(initUserDate, displayDate, props.config), this);
+        let initUserDate = convertMomToDateTime(this.props.date, showAm, showSec);
+        let displayDate = initUserDate || convertMomToDateTime(Mon(), showAm, showSec);
+
+        this.dispatcher = new Store(new InitState(initUserDate, displayDate as DateTime, finalConfig), this);
 
         this.state = this.dispatcher.getCurrentState();
 
@@ -95,7 +103,7 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
     }
 
     handleChangeInInput() {
-        // for not giving browser warning 
+        // for not giving browser warning
         console.log('calendar click');
     }
 
@@ -111,8 +119,8 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
                 let newDate = newState.currentDateTime;
                 console.log(
                     'hjkh %s %s %s',
-                    newDate ? newDate.day : 'null',
-                    beforeDate ? beforeDate.day : 'null',
+                    newDate && newDate.date ? newDate.date.day : 'null',
+                    beforeDate && beforeDate.date ? beforeDate.date.day : 'null',
                     newState.userEndSelection
                 );
 
