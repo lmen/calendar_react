@@ -1,11 +1,12 @@
-import { Config } from '../calendar';
+
 import { DateTime, Time, Date } from './dateTime';
+import { CalendarConfig } from './config';
 
 export enum VIEW { DAY, MONTH_LIST, YEAR_LIST }
 
 export class CalendarState {
 
-    config: Config;
+    config: CalendarConfig;
 
     open: boolean;
     userEndSelection: boolean;

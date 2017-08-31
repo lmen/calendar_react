@@ -5,16 +5,19 @@ import { CalendarState } from './redux/state';
 import { CalendarStateSubscriber, Store, } from './redux/dispatcher';
 import { DataChanged, OpenDropDown, InitState, CloseDropDownUserReectSelection } from './redux/actions';
 import {
-    DateTimeToString, convertDateTimeToMom, areDateTimeDifferent,
+    convertDateTimeToMom, areDateTimeDifferent,
     convertMomToDateTime, DateTime
 } from './redux/dateTime';
-import { createFinalConfig } from './redux/config';
+import { createCalendarConfig } from './redux/config';
 
 export interface Config {
-    locale_code: string;
+    localeCode?: string;
     showSeconds?: boolean;
     showTimeZone?: boolean;
     showAmPm?: boolean;
+    workingMode?: 'datetime' | 'date' | 'time';
+    inputFormaterFn?: (dateTime: DateTime | null, Config: Config) => string;
+    dropDownFormaterFn?: (dateTime: DateTime | null, Config: Config) => string;
 }
 
 interface CProps {
@@ -30,14 +33,14 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
     constructor(props: CProps) {
         super(props);
 
-        let finalConfig = createFinalConfig(props.config);
-        let showAm = finalConfig.showAmPm as boolean;
-        let showSec = finalConfig.showSeconds as boolean;
+        let calendarConfig = createCalendarConfig(props.config);
+        let showAm = calendarConfig.showAmPm;
+        let showSec = calendarConfig.showSeconds;
 
         let initUserDate = convertMomToDateTime(this.props.date, showAm, showSec);
-        let displayDate = initUserDate || convertMomToDateTime(Mon(), showAm, showSec);
+        let displayDate = (initUserDate || convertMomToDateTime(Mon(), showAm, showSec)) as DateTime;
 
-        this.dispatcher = new Store(new InitState(initUserDate, displayDate as DateTime, finalConfig), this);
+        this.dispatcher = new Store(new InitState(initUserDate, displayDate, calendarConfig), this);
 
         this.state = this.dispatcher.getCurrentState();
 
@@ -65,7 +68,7 @@ export class Calendar extends React.PureComponent<CProps, CalendarState> impleme
     render() {
         console.log('Calendar render state:%s props: %s', Object.keys(this.state), Object.keys(this.props));
         const currentDate = this.state.currentDateTime;
-        const currentDateStr = DateTimeToString(currentDate);
+        const currentDateStr = this.state.config.inputFormaterFn(currentDate, this.state.config);
         return (
             <div className="lmen-calendar" onClick={this.handleClickInCalendarArea}>
                 <input

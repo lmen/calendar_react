@@ -111,13 +111,13 @@ export function convertMomToDate(mom: Mom.Moment): Date {
     return date;
 }
 
-export function DateTimeToString(a: DateTime | null): string {
+export function DateTimeToString(a: DateTime | null, format: string): string {
     if (!a) {
         return '';
     }
     let m = convertDateTimeToMom(a);
 
-    return m.format();
+    return m.format(format);
 }
 
 export function areDateTimeDifferent(a: DateTime | null, b: DateTime | null): boolean {

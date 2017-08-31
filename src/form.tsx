@@ -4,7 +4,7 @@ import * as Mom from 'moment';
 import 'moment/locale/pt';
 
 const CalendarConfig: Config = {
-    locale_code: 'pt'
+    localeCode: 'pt'
 };
 
 export class Form extends React.Component<{}, {

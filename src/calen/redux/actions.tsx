@@ -6,7 +6,7 @@ import {
     Date, DateTime, Time
 } from './dateTime';
 import * as Mom from 'moment';
-import { Config } from '../calendar';
+import { CalendarConfig } from './config';
 
 export interface Action {
     reduce(state: CalendarState): CalendarState;
@@ -21,13 +21,13 @@ export class InitState implements InitialState {
     constructor(
         private initiallySelected: DateTime | null,
         private defaultDisplayDate: DateTime,
-        private config: Config) {
+        private calendarConfig: CalendarConfig) {
     }
 
     build(): CalendarState {
 
         // handle configuration with default values
-        let config = this.config;
+        let config = this.calendarConfig;
 
         let selectedDateTime = this.initiallySelected ? this.initiallySelected : null;
 
