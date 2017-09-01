@@ -2337,6 +2337,7 @@
   .lmen-calendar .inline-link {
     cursor: pointer; }
   .lmen-calendar .dropDown {
+    z-index: 100;
     background-color: white;
     position: absolute;
     width: 250px;

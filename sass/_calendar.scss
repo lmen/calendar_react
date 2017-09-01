@@ -10,6 +10,7 @@ $dropDown-width: 250px;
         cursor: pointer;
     }
     .dropDown {
+        z-index: 100;
         background-color: white;
         position: absolute;
         width: $dropDown-width;

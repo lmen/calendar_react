@@ -67,11 +67,16 @@ export function convertDateTimeToMom(a: DateTime): Mom.Moment {
     return date;
 }
 
-export function convertDateAndTimeToDateTime(date: Date, time: Time): DateTime {
+export function convertDateAndTimeToDateTime(date: Date | null, time: Time | null): DateTime {
     let dateTime = new DateTime();
 
-    dateTime.date = { ...date };
-    dateTime.time = { ...time };
+    if (date) {
+        dateTime.date = { ...date };
+    }
+
+    if (time) {
+        dateTime.time = { ...time };
+    }
 
     return dateTime;
 }

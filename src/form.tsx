@@ -7,14 +7,28 @@ const CalendarConfig: Config = {
     localeCode: 'pt'
 };
 
+const CalendarConfigTime: Config = {
+    localeCode: 'pt',
+    workingMode: 'time'
+};
+
+const CalendarConfigDate: Config = {
+    localeCode: 'pt',
+    workingMode: 'date'
+};
+
 export class Form extends React.Component<{}, {
     transferDate: Mom.Moment | null;
+    transferDateTime: Mom.Moment | null;
+    transferDateDate: Mom.Moment | null;
 }> {
 
     constructor(props: {}) {
         super(props);
         this.state = {
             transferDate: Mom(),
+            transferDateTime: null,
+            transferDateDate: null
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handlePlusYear = this.handlePlusYear.bind(this);
@@ -32,6 +46,16 @@ export class Form extends React.Component<{}, {
                 <Calendar
                     config={CalendarConfig}
                     date={this.state.transferDate}
+                    onDateChange={this.handleDateChange}
+                />
+                <Calendar
+                    config={CalendarConfigTime}
+                    date={this.state.transferDateTime}
+                    onDateChange={this.handleDateChange}
+                />
+                <Calendar
+                    config={CalendarConfigDate}
+                    date={this.state.transferDateDate}
                     onDateChange={this.handleDateChange}
                 />
             </div>

@@ -5,8 +5,8 @@ import { CalendarState } from './redux/state';
 import { CalendarStateSubscriber, Store, } from './redux/dispatcher';
 import { DataChanged, OpenDropDown, InitState, CloseDropDownUserReectSelection } from './redux/actions';
 import {
-    convertDateTimeToMom, areDateTimeDifferent,
-    convertMomToDateTime, DateTime
+    areDateTimeDifferent, convertDateTimeToMom, convertMomToDateTime,
+    DateTime, Time, Date
 } from './redux/dateTime';
 import { createCalendarConfig } from './redux/config';
 
@@ -17,7 +17,7 @@ export interface Config {
     showAmPm?: boolean;
     workingMode?: 'datetime' | 'date' | 'time';
     inputFormaterFn?: (dateTime: DateTime | null, Config: Config) => string;
-    dropDownFormaterFn?: (dateTime: DateTime | null, Config: Config) => string;
+    dropDownFormaterFn?: (date: Date | null, time: Time | null, config: Config) => string;
 }
 
 interface CProps {
