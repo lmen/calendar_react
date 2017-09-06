@@ -279,7 +279,17 @@ export class OpenDropDown implements Action {
         let open = true;
         let userEndSelection = false;
 
-        return { ...state, open, userEndSelection };
+        let showAm = state.config.showAmPm;
+        let showSec = state.config.showSeconds;
+        let displayDateTime = convertMomToDateTime(Mom(), showAm, showSec) as DateTime;
+
+        let timeDisplayed = convertDateTimeToTime(displayDateTime) as Time;
+        let displayDate = convertDateTimeToDate(displayDateTime) as Date;
+
+        let dateSelection = { ...state.dateSelection, displayDate };
+        let timeSelection = { ...state.timeSelection, timeDisplayed };
+
+        return { ...state, open, userEndSelection, dateSelection, timeSelection };
     }
 }
 
@@ -289,10 +299,6 @@ export class CloseDropDownUserAcceptSelection implements Action {
 
         let dateSel = state.dateSelection.selectedDate;
         let timeSel = state.timeSelection.timeSelected;
-
-        if (!dateSel || !timeSel) {
-            return state;
-        }
 
         let open = false;
         let userEndSelection = true;

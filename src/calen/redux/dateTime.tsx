@@ -18,6 +18,10 @@ export class Time {
 export class DateTime {
     date: Date | null;
     time: Time | null;
+    constructor() {
+        this.date = null;
+        this.time = null;
+    }
 }
 
 export function convertMomToDateTime(mom: Mom.Moment | null, hasAmPm: boolean, withSeconds: boolean): DateTime | null {
@@ -47,7 +51,11 @@ export function convertMomToDateTime(mom: Mom.Moment | null, hasAmPm: boolean, w
     return dateTime;
 }
 
-export function convertDateTimeToMom(a: DateTime): Mom.Moment {
+export function convertDateTimeToMom(a: DateTime): Mom.Moment | null {
+
+    if (!a.date && !a.time) {
+        return null;
+    }
 
     let confi: Mom.MomentInputObject = {};
     if (a.date) {
@@ -77,6 +85,7 @@ export function convertDateAndTimeToDateTime(date: Date | null, time: Time | nul
     if (time) {
         dateTime.time = { ...time };
     }
+    console.log('convertDateAnTimeToDateTime %s', JSON.stringify(dateTime));
 
     return dateTime;
 }
@@ -122,10 +131,11 @@ export function DateTimeToString(a: DateTime | null, format: string): string {
     }
     let m = convertDateTimeToMom(a);
 
-    return m.format(format);
+    return m ? m.format(format) : '';
 }
 
 export function areDateTimeDifferent(a: DateTime | null, b: DateTime | null): boolean {
+    console.log('areDate Diferent a: %s b:%s', JSON.stringify(a), JSON.stringify(b));
     if (a !== null && b !== null) {
         let res = false;
         if (a.date !== null && b.date !== null) {

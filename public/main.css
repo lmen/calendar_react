@@ -2330,6 +2330,7 @@
 
 .lmen-calendar {
   background-color: white;
+  color: black;
   position: relative; }
   .lmen-calendar input {
     width: 170px;
