@@ -18,45 +18,50 @@ const CalendarConfigDate: Config = {
 };
 
 export class Form extends React.Component<{}, {
-    transferDate: Mom.Moment | null;
     transferDateTime: Mom.Moment | null;
-    transferDateDate: Mom.Moment | null;
+    transferTime: Mom.Moment | null;
+    transferDate: Mom.Moment | null;
 }> {
 
     constructor(props: {}) {
         super(props);
         this.state = {
-            transferDate: Mom(),
-            transferDateTime: null,
-            transferDateDate: null
+            transferDateTime: Mom(),
+            transferTime: null,
+            transferDate: null
         };
-        this.handleDateChange = this.handleDateChange.bind(this);
+        this.handleDateChangeDateTime = this.handleDateChangeDateTime.bind(this);
+        this.handleDateChangeTime = this.handleDateChangeTime.bind(this);
+        this.handleDateChangeDate = this.handleDateChangeDate.bind(this);
         this.handlePlusYear = this.handlePlusYear.bind(this);
         this.handleToNull = this.handleToNull.bind(this);
     }
 
     render() {
-        const d = this.state.transferDate;
-        const date = d ? d.format() : 'Its null';
+
         return (
             <div>
-                <div> TransfereDate: {date} </div>
+                <div> TransfereDate: {momtoString(this.state.transferDateTime)} </div>
                 <button onClick={this.handlePlusYear}>Plus one year</button>
                 <button onClick={this.handleToNull}>To null</button>
                 <Calendar
                     config={CalendarConfig}
-                    date={this.state.transferDate}
-                    onDateChange={this.handleDateChange}
+                    date={this.state.transferDateTime}
+                    onDateChange={this.handleDateChangeDateTime}
                 />
+
+                <div> TransfereDate: {momtoString(this.state.transferTime)} </div>
                 <Calendar
                     config={CalendarConfigTime}
-                    date={this.state.transferDateTime}
-                    onDateChange={this.handleDateChange}
+                    date={this.state.transferTime}
+                    onDateChange={this.handleDateChangeTime}
                 />
+
+                <div> TransfereDate: {momtoString(this.state.transferDate)} </div>
                 <Calendar
                     config={CalendarConfigDate}
-                    date={this.state.transferDateDate}
-                    onDateChange={this.handleDateChange}
+                    date={this.state.transferDate}
+                    onDateChange={this.handleDateChangeDate}
                 />
             </div>
         );
@@ -80,11 +85,29 @@ export class Form extends React.Component<{}, {
         });
     }
 
-    handleDateChange(newDate: Mom.Moment) {
+    handleDateChangeDateTime(newDate: Mom.Moment) {
 
-        console.log('insider Form: %s', newDate ? newDate.format() : 'null');
+        console.log('insider DateTime Form: %s', newDate ? newDate.format() : 'null');
+
+        this.setState(() => { return { transferDateTime: newDate }; });
+    }
+
+    handleDateChangeTime(newDate: Mom.Moment) {
+
+        console.log('insider just Time Form: %s', newDate ? newDate.format() : 'null');
+
+        this.setState(() => { return { transferTime: newDate }; });
+    }
+
+    handleDateChangeDate(newDate: Mom.Moment) {
+
+        console.log('insider just Date Form: %s', newDate ? newDate.format() : 'null');
 
         this.setState(() => { return { transferDate: newDate }; });
     }
 
+}
+
+function momtoString(d: Mom.Moment | null): string {
+    return d ? d.format() : 'Its null';
 }
